@@ -1,0 +1,4857 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Physis Fold — 1R1F</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(0.972 0.008 85);
+    --bg-warm: oklch(0.955 0.012 80);
+    --ink: oklch(0.19 0.012 80);
+    --ink-soft: oklch(0.32 0.010 80);
+    --muted: oklch(0.55 0.008 80);
+    --line: oklch(0.85 0.010 80);
+    --line-soft: oklch(0.90 0.008 80);
+    --accent: oklch(0.45 0.075 145);
+    --accent-soft: oklch(0.88 0.035 145);
+    --accent-bg: oklch(0.96 0.020 145);
+    --dark: oklch(0.19 0.012 80);
+    --dark-ink: oklch(0.92 0.010 80);
+    --clash: oklch(0.52 0.150 32);
+    --warn: oklch(0.62 0.120 75);
+    --serif: "Fraunces","Iowan Old Style",Georgia,serif;
+    --sans: "Inter Tight",ui-sans-serif,system-ui,sans-serif;
+    --mono: "JetBrains Mono",ui-monospace,Menlo,monospace;
+    --glass: color-mix(in oklab, var(--bg) 78%, transparent);
+  }
+  * { box-sizing: border-box; }
+  body { margin:auto; background:var(--bg); color:var(--ink); font-family:var(--sans);
+          font-size:15px; line-height:1.5; padding:52px 28px 90px; max-width:1180px;
+          -webkit-font-smoothing:antialiased; }
+  a { color:var(--accent); }
+  .eyebrow { font-family:var(--mono); font-size:12px; letter-spacing:0.2em; text-transform:uppercase;
+              color:var(--accent); margin:0 0 18px; display:flex; align-items:center; gap:11px; }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none; }
+  h1 { font-family:var(--serif); font-weight:400; letter-spacing:-0.025em; font-variation-settings:"SOFT" 50;
+        font-size:clamp(30px,4vw,46px); line-height:1.05; margin:0 0 8px; }
+  h1 em { font-style:italic; color:var(--accent); }
+  h2 { font-family:var(--serif); font-weight:400; font-size:26px; letter-spacing:-0.02em;
+        margin:46px 0 18px; }
+  .sub { color:var(--muted); margin:0 0 30px; font-family:var(--mono); font-size:12px;
+          letter-spacing:0.06em; }
+  .verdict { display:inline-block; vertical-align:middle; margin-left:14px; padding:5px 14px;
+              border-radius:2px; font-family:var(--mono); font-size:12px; letter-spacing:0.12em;
+              font-weight:500; text-transform:uppercase; }
+  .verdict.ok { color:var(--accent); border:1px solid var(--accent); background:var(--accent-bg); }
+  .verdict.warn { color:var(--warn); border:1px solid var(--warn); }
+  .verdict.bad { color:var(--clash); border:1px solid var(--clash); }
+  .verdict.muted { color:var(--muted); border:1px solid var(--line); }
+  .cards { display:flex; flex-wrap:wrap; gap:12px; margin:0 0 30px; }
+  .card { background:var(--glass); backdrop-filter:blur(10px); border:1px solid var(--line);
+           border-top:2px solid var(--accent); padding:16px 20px; min-width:140px;
+           display:flex; flex-direction:column; gap:6px; }
+  .card-v { font-family:var(--serif); font-size:26px; line-height:1; color:var(--ink); }
+  .card-l { font-family:var(--mono); font-size:10px; color:var(--muted); text-transform:uppercase;
+             letter-spacing:.12em; }
+  .card.frc { border-top-color:var(--accent-soft); }
+  .card.frc .card-v { color:var(--accent); }
+  details { background:var(--glass); backdrop-filter:blur(10px) saturate(1.1); border:1px solid var(--line);
+             margin:0 0 12px; overflow:hidden;
+             box-shadow:0 1px 0 color-mix(in oklab,var(--bg) 80%,transparent),
+                        0 30px 70px -55px oklch(0.4 0.02 80 / 0.4); }
+  summary { cursor:pointer; padding:14px 20px; font-family:var(--mono); font-size:13px; font-weight:500;
+             letter-spacing:0.03em; list-style:none; user-select:none; display:flex; align-items:center;
+             gap:10px; color:var(--ink); }
+  summary::-webkit-details-marker { display:none; }
+  summary::before { content:"›"; font-size:18px; line-height:1; color:var(--accent); transition:transform .15s; }
+  details[open] summary::before { transform:rotate(90deg); }
+  .section-body { padding:4px 20px 20px; }
+  .badge { margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted);
+            border:1px solid var(--line); border-radius:999px; padding:1px 10px; }
+  table { border-collapse:collapse; width:100%; font-size:13px; }
+  table.kv td { padding:6px 10px; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  table.kv td.k { font-family:var(--mono); font-size:12px; color:var(--muted); white-space:nowrap; width:1%; }
+  table.kv td.v { font-family:var(--mono); color:var(--ink); font-variant-numeric:tabular-nums; }
+  table.data { font-family:var(--mono); }
+  table.data th { text-align:left; font-weight:500; color:var(--muted); font-size:10px; letter-spacing:0.1em;
+            text-transform:uppercase; padding:0 10px 10px; border-bottom:1px solid var(--line); }
+  table.data td { padding:9px 10px; border-bottom:1px solid var(--line-soft); color:var(--ink-soft);
+            font-variant-numeric:tabular-nums; }
+  table.data tr:hover td { color:var(--accent); }
+  .msg { background:var(--accent-bg); border-left:3px solid var(--accent); padding:10px 14px;
+          border-radius:2px; font-size:14px; color:var(--ink-soft); }
+  .k { font-family:var(--mono); color:var(--muted); font-size:11px; letter-spacing:0.06em;
+        text-transform:uppercase; margin:14px 0 6px; }
+  .muted { color:var(--muted); }
+  pre.raw { background:var(--dark); color:var(--dark-ink); border:1px solid var(--line); border-radius:2px;
+             padding:14px; overflow:auto; max-height:440px; font-family:var(--mono); font-size:12px;
+             line-height:1.6; }
+  .vbar { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 12px; }
+  .vbtn { font-family:var(--mono); font-size:12px; letter-spacing:0.03em; background:var(--glass);
+           color:var(--ink-soft); border:1px solid var(--line); border-radius:2px; padding:8px 14px;
+           cursor:pointer; transition:border-color .15s, color .15s; }
+  .vbtn:hover { border-color:var(--accent); color:var(--accent); }
+</style></head>
+<body>
+  <div class="eyebrow"><span class="dot"></span>MorphoComputing · Physis Fold Oracle</div>
+  <h1>Physis Fold — 1R1F<span class="verdict warn">PASS_WITH_WARNINGS</span></h1>
+  <p class="sub">Constraint-guided all-atom refinement — fold report</p>
+  <div class="cards"><div class='card'><div class='card-v'>4.112</div><div class='card-l'>CA RMSD (Å)</div></div><div class='card'><div class='card-v'>5.251</div><div class='card-l'>Heavy-atom RMSD (Å)</div></div><div class='card'><div class='card-v'>0.227</div><div class='card-l'>TM-score</div></div><div class='card'><div class='card-v'>35</div><div class='card-l'>Residues</div></div><div class='card'><div class='card-v'>528</div><div class='card-l'>Distogram pairs</div></div><div class='card'><div class='card-v'>0</div><div class='card-l'>LJ severe</div></div><div class='card'><div class='card-v'>0.000</div><div class='card-l'>Rama forbidden</div></div><div class='card frc'><div class='card-v'>2</div><div class='card-l'>Ensemble models</div></div><div class='card frc'><div class='card-v'>25 / 4</div><div class='card-l'>Helices / Strands</div></div><div class='card frc'><div class='card-v'>17</div><div class='card-l'>H-bonds</div></div><div class='card frc'><div class='card-v'>0.02</div><div class='card-l'>PAE (mean, Å)</div></div></div>
+  
+<div class="vbar">
+  
+  <button data-scheme="spectrum" class="vbtn">Spectrum N→C</button>
+  <button data-scheme="ss" class="vbtn">Secondary structure</button>
+  <button data-scheme="error" class="vbtn">Errors/conflicts</button>
+</div>
+<div id="viewport" style="position:relative;width:100%;height:500px;border-radius:2px;
+     border:1px solid var(--line);background:#211f1a;overflow:hidden;"></div>
+<p class="muted" id="vlegend" style="margin-top:8px"></p>
+<script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+<script>
+(function() {
+  var pdb = "REMARK   1 CREATED WITH OPENMM 8.5.2, 2026-06-23\nATOM      1  CA  PHE A   1      40.095  51.256  49.753  1.00  0.00           C  \nATOM      2  HA  PHE A   1      39.988  50.416  49.067  1.00  0.00           H  \nATOM      3  N   PHE A   1      39.023  51.150  50.784  1.00  0.00           N  \nATOM      4  H   PHE A   1      38.993  51.955  51.393  1.00  0.00           H  \nATOM      5  H2  PHE A   1      39.191  50.320  51.335  1.00  0.00           H  \nATOM      6  H3  PHE A   1      38.124  51.052  50.334  1.00  0.00           H  \nATOM      7  CB  PHE A   1      39.843  52.534  48.915  1.00  0.00           C  \nATOM      8  HB2 PHE A   1      38.883  52.392  48.418  1.00  0.00           H  \nATOM      9  HB3 PHE A   1      39.683  53.394  49.565  1.00  0.00           H  \nATOM     10  CG  PHE A   1      40.817  52.947  47.827  1.00  0.00           C  \nATOM     11  CD1 PHE A   1      41.644  54.072  48.016  1.00  0.00           C  \nATOM     12  HD1 PHE A   1      41.673  54.575  48.971  1.00  0.00           H  \nATOM     13  CE1 PHE A   1      42.417  54.571  46.952  1.00  0.00           C  \nATOM     14  HE1 PHE A   1      43.049  55.434  47.102  1.00  0.00           H  \nATOM     15  CZ  PHE A   1      42.355  53.959  45.689  1.00  0.00           C  \nATOM     16  HZ  PHE A   1      42.936  54.354  44.869  1.00  0.00           H  \nATOM     17  CE2 PHE A   1      41.522  52.845  45.492  1.00  0.00           C  \nATOM     18  HE2 PHE A   1      41.454  52.392  44.514  1.00  0.00           H  \nATOM     19  CD2 PHE A   1      40.754  52.340  46.557  1.00  0.00           C  \nATOM     20  HD2 PHE A   1      40.082  51.513  46.382  1.00  0.00           H  \nATOM     21  C   PHE A   1      41.595  51.038  50.539  1.00  0.00           C  \nATOM     22  O   PHE A   1      41.074  49.939  50.784  1.00  0.00           O  \nATOM     23  CA  CYS A   2      44.185  50.556  52.047  1.00  0.00           C  \nATOM     24  HA  CYS A   2      44.265  49.806  52.834  1.00  0.00           H  \nATOM     25  N   CYS A   2      42.747  50.443  51.328  1.00  0.00           N  \nATOM     26  H   CYS A   2      42.448  49.498  51.524  1.00  0.00           H  \nATOM     27  CB  CYS A   2      45.354  50.576  51.100  1.00  0.00           C  \nATOM     28  HB2 CYS A   2      45.048  50.243  50.109  1.00  0.00           H  \nATOM     29  HB3 CYS A   2      45.806  51.568  51.105  1.00  0.00           H  \nATOM     30  SG  CYS A   2      46.495  49.396  51.837  1.00  0.00           S  \nATOM     31  HG  CYS A   2      45.678  48.341  51.766  1.00  0.00           H  \nATOM     32  C   CYS A   2      43.472  51.832  52.610  1.00  0.00           C  \nATOM     33  O   CYS A   2      44.247  52.383  53.386  1.00  0.00           O  \nATOM     34  CA  GLY A   3      40.813  53.171  52.274  1.00  0.00           C  \nATOM     35  HA2 GLY A   3      40.685  53.623  51.291  1.00  0.00           H  \nATOM     36  HA3 GLY A   3      39.964  52.695  52.766  1.00  0.00           H  \nATOM     37  N   GLY A   3      42.211  52.503  52.543  1.00  0.00           N  \nATOM     38  H   GLY A   3      42.413  52.827  53.478  1.00  0.00           H  \nATOM     39  C   GLY A   3      41.471  54.249  53.220  1.00  0.00           C  \nATOM     40  O   GLY A   3      42.681  54.432  53.024  1.00  0.00           O  \nATOM     41  CA  GLU A   4      42.080  56.004  54.903  1.00  0.00           C  \nATOM     42  HA  GLU A   4      41.449  56.147  55.780  1.00  0.00           H  \nATOM     43  N   GLU A   4      41.121  55.018  54.264  1.00  0.00           N  \nATOM     44  H   GLU A   4      40.171  54.977  54.605  1.00  0.00           H  \nATOM     45  CB  GLU A   4      41.542  57.045  53.709  1.00  0.00           C  \nATOM     46  HB2 GLU A   4      40.489  56.867  53.496  1.00  0.00           H  \nATOM     47  HB3 GLU A   4      42.110  56.793  52.814  1.00  0.00           H  \nATOM     48  CG  GLU A   4      41.405  58.599  53.561  1.00  0.00           C  \nATOM     49  HG2 GLU A   4      40.928  58.997  54.456  1.00  0.00           H  \nATOM     50  HG3 GLU A   4      42.392  59.045  53.441  1.00  0.00           H  \nATOM     51  CD  GLU A   4      40.578  59.058  52.340  1.00  0.00           C  \nATOM     52  OE1 GLU A   4      40.113  60.225  52.334  1.00  0.00           O  \nATOM     53  OE2 GLU A   4      40.398  58.298  51.356  1.00  0.00           O  \nATOM     54  C   GLU A   4      43.247  56.864  55.576  1.00  0.00           C  \nATOM     55  O   GLU A   4      42.972  58.078  55.522  1.00  0.00           O  \nATOM     56  CA  THR A   5      45.726  55.968  56.804  1.00  0.00           C  \nATOM     57  HA  THR A   5      45.613  55.704  57.855  1.00  0.00           H  \nATOM     58  N   THR A   5      44.461  56.686  56.242  1.00  0.00           N  \nATOM     59  H   THR A   5      44.566  57.636  56.568  1.00  0.00           H  \nATOM     60  CB  THR A   5      46.541  57.285  56.718  1.00  0.00           C  \nATOM     61  HB  THR A   5      47.601  57.075  56.862  1.00  0.00           H  \nATOM     62  CG2 THR A   5      46.135  58.388  57.710  1.00  0.00           C  \nATOM     63 HG21 THR A   5      46.227  58.021  58.732  1.00  0.00           H  \nATOM     64 HG22 THR A   5      45.168  58.846  57.504  1.00  0.00           H  \nATOM     65 HG23 THR A   5      46.803  59.237  57.569  1.00  0.00           H  \nATOM     66  OG1 THR A   5      46.395  57.860  55.417  1.00  0.00           O  \nATOM     67  HG1 THR A   5      45.498  57.692  55.120  1.00  0.00           H  \nATOM     68  C   THR A   5      46.969  55.066  56.114  1.00  0.00           C  \nATOM     69  O   THR A   5      47.733  54.705  57.000  1.00  0.00           O  \nATOM     70  CA  CYS A   6      48.613  54.071  53.838  1.00  0.00           C  \nATOM     71  HA  CYS A   6      49.409  53.557  54.377  1.00  0.00           H  \nATOM     72  N   CYS A   6      47.311  54.389  54.823  1.00  0.00           N  \nATOM     73  H   CYS A   6      46.490  54.423  54.235  1.00  0.00           H  \nATOM     74  CB  CYS A   6      48.169  53.314  52.609  1.00  0.00           C  \nATOM     75  HB2 CYS A   6      47.084  53.369  52.518  1.00  0.00           H  \nATOM     76  HB3 CYS A   6      48.661  53.715  51.723  1.00  0.00           H  \nATOM     77  SG  CYS A   6      48.682  51.601  52.884  1.00  0.00           S  \nATOM     78  HG  CYS A   6      49.851  51.713  52.247  1.00  0.00           H  \nATOM     79  C   CYS A   6      49.020  55.691  53.706  1.00  0.00           C  \nATOM     80  O   CYS A   6      48.262  55.966  54.466  1.00  0.00           O  \nATOM     81  CA  ARG A   7      49.208  58.647  53.924  1.00  0.00           C  \nATOM     82  HA  ARG A   7      49.449  58.637  52.861  1.00  0.00           H  \nATOM     83  N   ARG A   7      48.834  57.118  54.064  1.00  0.00           N  \nATOM     84  H   ARG A   7      48.006  57.346  54.596  1.00  0.00           H  \nATOM     85  CB  ARG A   7      48.047  59.719  54.044  1.00  0.00           C  \nATOM     86  HB2 ARG A   7      47.694  59.755  55.074  1.00  0.00           H  \nATOM     87  HB3 ARG A   7      47.228  59.407  53.396  1.00  0.00           H  \nATOM     88  CG  ARG A   7      48.390  61.201  53.726  1.00  0.00           C  \nATOM     89  HG2 ARG A   7      48.822  61.632  54.629  1.00  0.00           H  \nATOM     90  HG3 ARG A   7      49.129  61.242  52.926  1.00  0.00           H  \nATOM     91  CD  ARG A   7      47.235  62.110  53.291  1.00  0.00           C  \nATOM     92  HD2 ARG A   7      46.418  62.058  54.010  1.00  0.00           H  \nATOM     93  HD3 ARG A   7      46.876  61.763  52.321  1.00  0.00           H  \nATOM     94  NE  ARG A   7      47.738  63.495  53.159  1.00  0.00           N  \nATOM     95  HE  ARG A   7      48.696  63.657  53.437  1.00  0.00           H  \nATOM     96  CZ  ARG A   7      47.100  64.561  52.716  1.00  0.00           C  \nATOM     97  NH1 ARG A   7      45.857  64.531  52.337  1.00  0.00           N  \nATOM     98 HH11 ARG A   7      45.350  63.657  52.365  1.00  0.00           H  \nATOM     99 HH12 ARG A   7      45.401  65.375  52.023  1.00  0.00           H  \nATOM    100  NH2 ARG A   7      47.715  65.705  52.648  1.00  0.00           N  \nATOM    101 HH21 ARG A   7      47.237  66.509  52.266  1.00  0.00           H  \nATOM    102 HH22 ARG A   7      48.679  65.782  52.939  1.00  0.00           H  \nATOM    103  C   ARG A   7      50.332  58.812  54.738  1.00  0.00           C  \nATOM    104  O   ARG A   7      50.658  59.733  53.981  1.00  0.00           O  \nATOM    105  CA  VAL A   8      51.271  58.079  56.312  1.00  0.00           C  \nATOM    106  HA  VAL A   8      52.344  58.152  56.490  1.00  0.00           H  \nATOM    107  N   VAL A   8      51.374  59.096  55.270  1.00  0.00           N  \nATOM    108  H   VAL A   8      52.191  59.395  54.757  1.00  0.00           H  \nATOM    109  CB  VAL A   8      50.869  58.868  57.623  1.00  0.00           C  \nATOM    110  HB  VAL A   8      51.271  59.876  57.514  1.00  0.00           H  \nATOM    111  CG1 VAL A   8      49.376  59.022  57.795  1.00  0.00           C  \nATOM    112 HG11 VAL A   8      48.963  59.460  56.886  1.00  0.00           H  \nATOM    113 HG12 VAL A   8      49.144  59.703  58.613  1.00  0.00           H  \nATOM    114 HG13 VAL A   8      48.965  58.036  58.014  1.00  0.00           H  \nATOM    115  CG2 VAL A   8      51.362  58.442  59.018  1.00  0.00           C  \nATOM    116 HG21 VAL A   8      50.780  57.614  59.420  1.00  0.00           H  \nATOM    117 HG22 VAL A   8      52.422  58.190  58.983  1.00  0.00           H  \nATOM    118 HG23 VAL A   8      51.201  59.272  59.706  1.00  0.00           H  \nATOM    119  C   VAL A   8      51.428  56.409  56.572  1.00  0.00           C  \nATOM    120  O   VAL A   8      51.203  55.695  55.596  1.00  0.00           O  \nATOM    121  CA  ILE A   9      52.428  54.398  58.681  1.00  0.00           C  \nATOM    122  HA  ILE A   9      52.629  54.716  59.704  1.00  0.00           H  \nATOM    123  N   ILE A   9      51.632  55.716  57.917  1.00  0.00           N  \nATOM    124  H   ILE A   9      51.524  56.420  58.633  1.00  0.00           H  \nATOM    125  CB  ILE A   9      51.537  53.136  58.766  1.00  0.00           C  \nATOM    126  HB  ILE A   9      50.700  53.243  58.076  1.00  0.00           H  \nATOM    127  CG2 ILE A   9      52.220  51.799  58.488  1.00  0.00           C  \nATOM    128 HG21 ILE A   9      51.494  50.990  58.561  1.00  0.00           H  \nATOM    129 HG22 ILE A   9      52.989  51.639  59.244  1.00  0.00           H  \nATOM    130 HG23 ILE A   9      52.633  51.786  57.479  1.00  0.00           H  \nATOM    131  CG1 ILE A   9      50.990  53.179  60.224  1.00  0.00           C  \nATOM    132 HG12 ILE A   9      50.508  54.143  60.388  1.00  0.00           H  \nATOM    133 HG13 ILE A   9      51.829  53.113  60.917  1.00  0.00           H  \nATOM    134  CD1 ILE A   9      49.987  52.105  60.652  1.00  0.00           C  \nATOM    135 HD11 ILE A   9      49.111  52.131  60.003  1.00  0.00           H  \nATOM    136 HD12 ILE A   9      49.674  52.306  61.676  1.00  0.00           H  \nATOM    137 HD13 ILE A   9      50.445  51.116  60.626  1.00  0.00           H  \nATOM    138  C   ILE A   9      53.870  54.556  58.015  1.00  0.00           C  \nATOM    139  O   ILE A   9      53.421  55.418  57.360  1.00  0.00           O  \nATOM    140  CA  PRO A  10      55.949  55.150  55.740  1.00  0.00           C  \nATOM    141  HA  PRO A  10      56.989  55.243  56.053  1.00  0.00           H  \nATOM    142  N   PRO A  10      54.940  55.299  56.939  1.00  0.00           N  \nATOM    143  CD  PRO A  10      55.261  56.811  56.939  1.00  0.00           C  \nATOM    144  HD2 PRO A  10      56.295  56.970  57.246  1.00  0.00           H  \nATOM    145  HD3 PRO A  10      54.620  57.392  57.602  1.00  0.00           H  \nATOM    146  CG  PRO A  10      55.084  57.300  55.483  1.00  0.00           C  \nATOM    147  HG2 PRO A  10      54.042  57.560  55.295  1.00  0.00           H  \nATOM    148  HG3 PRO A  10      55.742  58.136  55.247  1.00  0.00           H  \nATOM    149  CB  PRO A  10      55.452  56.076  54.638  1.00  0.00           C  \nATOM    150  HB2 PRO A  10      54.611  55.662  54.081  1.00  0.00           H  \nATOM    151  HB3 PRO A  10      56.265  56.310  53.951  1.00  0.00           H  \nATOM    152  C   PRO A  10      55.204  53.904  56.301  1.00  0.00           C  \nATOM    153  O   PRO A  10      53.995  53.910  56.128  1.00  0.00           O  \nATOM    154  CA  VAL A  11      55.807  51.251  56.780  1.00  0.00           C  \nATOM    155  HA  VAL A  11      56.757  51.585  56.362  1.00  0.00           H  \nATOM    156  N   VAL A  11      55.170  52.595  56.764  1.00  0.00           N  \nATOM    157  H   VAL A  11      54.201  52.457  57.011  1.00  0.00           H  \nATOM    158  CB  VAL A  11      56.382  50.727  58.127  1.00  0.00           C  \nATOM    159  HB  VAL A  11      56.883  49.775  57.952  1.00  0.00           H  \nATOM    160  CG1 VAL A  11      57.460  51.680  58.671  1.00  0.00           C  \nATOM    161 HG11 VAL A  11      58.277  51.762  57.956  1.00  0.00           H  \nATOM    162 HG12 VAL A  11      57.865  51.282  59.602  1.00  0.00           H  \nATOM    163 HG13 VAL A  11      57.039  52.668  58.856  1.00  0.00           H  \nATOM    164  CG2 VAL A  11      55.376  50.488  59.244  1.00  0.00           C  \nATOM    165 HG21 VAL A  11      55.052  51.444  59.655  1.00  0.00           H  \nATOM    166 HG22 VAL A  11      55.864  49.927  60.042  1.00  0.00           H  \nATOM    167 HG23 VAL A  11      54.534  49.905  58.871  1.00  0.00           H  \nATOM    168  C   VAL A  11      55.593  50.261  55.613  1.00  0.00           C  \nATOM    169  O   VAL A  11      56.229  49.236  55.676  1.00  0.00           O  \nATOM    170  CA  CYS A  12      54.529  49.842  53.304  1.00  0.00           C  \nATOM    171  HA  CYS A  12      53.514  50.060  52.971  1.00  0.00           H  \nATOM    172  N   CYS A  12      54.794  50.555  54.564  1.00  0.00           N  \nATOM    173  H   CYS A  12      54.363  51.467  54.613  1.00  0.00           H  \nATOM    174  CB  CYS A  12      55.531  50.487  52.333  1.00  0.00           C  \nATOM    175  HB2 CYS A  12      56.544  50.334  52.704  1.00  0.00           H  \nATOM    176  HB3 CYS A  12      55.462  49.996  51.362  1.00  0.00           H  \nATOM    177  SG  CYS A  12      55.223  52.274  52.153  1.00  0.00           S  \nATOM    178  HG  CYS A  12      56.216  52.514  51.292  1.00  0.00           H  \nATOM    179  C   CYS A  12      54.714  48.319  53.278  1.00  0.00           C  \nATOM    180  O   CYS A  12      54.339  47.866  52.202  1.00  0.00           O  \nATOM    181  CA  THR A  13      55.794  46.734  55.365  1.00  0.00           C  \nATOM    182  HA  THR A  13      55.163  46.723  56.255  1.00  0.00           H  \nATOM    183  N   THR A  13      55.209  47.462  54.193  1.00  0.00           N  \nATOM    184  H   THR A  13      55.194  48.270  54.800  1.00  0.00           H  \nATOM    185  CB  THR A  13      57.358  46.734  55.680  1.00  0.00           C  \nATOM    186  HB  THR A  13      57.591  45.805  56.202  1.00  0.00           H  \nATOM    187  CG2 THR A  13      58.305  46.756  54.468  1.00  0.00           C  \nATOM    188 HG21 THR A  13      59.317  47.017  54.778  1.00  0.00           H  \nATOM    189 HG22 THR A  13      57.953  47.466  53.720  1.00  0.00           H  \nATOM    190 HG23 THR A  13      58.348  45.760  54.026  1.00  0.00           H  \nATOM    191  OG1 THR A  13      57.836  47.633  56.646  1.00  0.00           O  \nATOM    192  HG1 THR A  13      57.380  48.442  56.401  1.00  0.00           H  \nATOM    193  C   THR A  13      55.797  45.408  54.707  1.00  0.00           C  \nATOM    194  O   THR A  13      56.086  44.341  55.335  1.00  0.00           O  \nATOM    195  CA  TYR A  14      54.971  44.635  52.221  1.00  0.00           C  \nATOM    196  HA  TYR A  14      54.489  45.236  51.450  1.00  0.00           H  \nATOM    197  N   TYR A  14      55.389  45.453  53.342  1.00  0.00           N  \nATOM    198  H   TYR A  14      55.448  46.374  52.931  1.00  0.00           H  \nATOM    199  CB  TYR A  14      56.149  43.774  51.723  1.00  0.00           C  \nATOM    200  HB2 TYR A  14      57.033  44.411  51.701  1.00  0.00           H  \nATOM    201  HB3 TYR A  14      56.338  42.993  52.459  1.00  0.00           H  \nATOM    202  CG  TYR A  14      56.057  43.142  50.337  1.00  0.00           C  \nATOM    203  CD1 TYR A  14      55.389  43.780  49.268  1.00  0.00           C  \nATOM    204  HD1 TYR A  14      54.873  44.717  49.420  1.00  0.00           H  \nATOM    205  CE1 TYR A  14      55.404  43.208  47.979  1.00  0.00           C  \nATOM    206  HE1 TYR A  14      54.893  43.691  47.159  1.00  0.00           H  \nATOM    207  CZ  TYR A  14      56.091  41.998  47.747  1.00  0.00           C  \nATOM    208  OH  TYR A  14      56.114  41.458  46.499  1.00  0.00           O  \nATOM    209  HH  TYR A  14      56.635  40.651  46.479  1.00  0.00           H  \nATOM    210  CE2 TYR A  14      56.775  41.367  48.807  1.00  0.00           C  \nATOM    211  HE2 TYR A  14      57.319  40.451  48.629  1.00  0.00           H  \nATOM    212  CD2 TYR A  14      56.756  41.941  50.093  1.00  0.00           C  \nATOM    213  HD2 TYR A  14      57.296  41.462  50.897  1.00  0.00           H  \nATOM    214  C   TYR A  14      53.934  44.056  53.253  1.00  0.00           C  \nATOM    215  O   TYR A  14      54.263  43.965  54.329  1.00  0.00           O  \nATOM    216  CA  SER A  15      51.444  42.901  53.271  1.00  0.00           C  \nATOM    217  HA  SER A  15      51.090  42.174  54.003  1.00  0.00           H  \nATOM    218  N   SER A  15      52.741  43.474  53.637  1.00  0.00           N  \nATOM    219  H   SER A  15      52.813  43.368  54.639  1.00  0.00           H  \nATOM    220  CB  SER A  15      50.544  44.137  53.144  1.00  0.00           C  \nATOM    221  HB2 SER A  15      49.564  43.868  53.539  1.00  0.00           H  \nATOM    222  HB3 SER A  15      50.893  44.918  53.820  1.00  0.00           H  \nATOM    223  OG  SER A  15      50.458  44.688  51.843  1.00  0.00           O  \nATOM    224  HG  SER A  15      51.110  45.389  51.767  1.00  0.00           H  \nATOM    225  C   SER A  15      52.156  42.258  52.093  1.00  0.00           C  \nATOM    226  O   SER A  15      53.301  42.455  51.811  1.00  0.00           O  \nATOM    227  CA  ALA A  16      52.352  40.819  50.098  1.00  0.00           C  \nATOM    228  HA  ALA A  16      53.385  40.533  50.292  1.00  0.00           H  \nATOM    229  N   ALA A  16      51.845  41.780  51.082  1.00  0.00           N  \nATOM    230  H   ALA A  16      50.864  41.949  50.910  1.00  0.00           H  \nATOM    231  CB  ALA A  16      52.189  41.315  48.660  1.00  0.00           C  \nATOM    232  HB1 ALA A  16      52.753  42.238  48.525  1.00  0.00           H  \nATOM    233  HB2 ALA A  16      52.559  40.559  47.968  1.00  0.00           H  \nATOM    234  HB3 ALA A  16      51.135  41.506  48.455  1.00  0.00           H  \nATOM    235  C   ALA A  16      51.381  39.687  50.576  1.00  0.00           C  \nATOM    236  O   ALA A  16      50.732  40.326  51.276  1.00  0.00           O  \nATOM    237  CA  ALA A  17      49.237  39.288  52.357  1.00  0.00           C  \nATOM    238  HA  ALA A  17      49.802  39.500  53.264  1.00  0.00           H  \nATOM    239  N   ALA A  17      50.360  39.104  51.285  1.00  0.00           N  \nATOM    240  H   ALA A  17      50.324  38.139  50.989  1.00  0.00           H  \nATOM    241  CB  ALA A  17      48.814  37.799  52.522  1.00  0.00           C  \nATOM    242  HB1 ALA A  17      49.680  37.138  52.497  1.00  0.00           H  \nATOM    243  HB2 ALA A  17      48.127  37.520  51.723  1.00  0.00           H  \nATOM    244  HB3 ALA A  17      48.332  37.617  53.483  1.00  0.00           H  \nATOM    245  C   ALA A  17      47.925  40.215  52.602  1.00  0.00           C  \nATOM    246  O   ALA A  17      47.414  39.799  53.627  1.00  0.00           O  \nATOM    247  CA  LEU A  18      46.880  42.256  50.964  1.00  0.00           C  \nATOM    248  HA  LEU A  18      45.823  42.429  50.765  1.00  0.00           H  \nATOM    249  N   LEU A  18      47.085  41.270  52.100  1.00  0.00           N  \nATOM    250  H   LEU A  18      46.323  41.356  52.757  1.00  0.00           H  \nATOM    251  CB  LEU A  18      47.448  43.388  51.888  1.00  0.00           C  \nATOM    252  HB2 LEU A  18      48.483  43.126  52.109  1.00  0.00           H  \nATOM    253  HB3 LEU A  18      47.442  44.353  51.381  1.00  0.00           H  \nATOM    254  CG  LEU A  18      46.705  43.703  53.235  1.00  0.00           C  \nATOM    255  HG  LEU A  18      46.920  42.923  53.965  1.00  0.00           H  \nATOM    256  CD1 LEU A  18      47.168  45.020  53.884  1.00  0.00           C  \nATOM    257 HD11 LEU A  18      46.364  45.475  54.463  1.00  0.00           H  \nATOM    258 HD12 LEU A  18      47.992  44.822  54.570  1.00  0.00           H  \nATOM    259 HD13 LEU A  18      47.506  45.734  53.133  1.00  0.00           H  \nATOM    260  CD2 LEU A  18      45.178  43.753  53.089  1.00  0.00           C  \nATOM    261 HD21 LEU A  18      44.794  42.793  52.743  1.00  0.00           H  \nATOM    262 HD22 LEU A  18      44.885  44.533  52.386  1.00  0.00           H  \nATOM    263 HD23 LEU A  18      44.724  43.958  54.058  1.00  0.00           H  \nATOM    264  C   LEU A  18      47.385  41.080  49.988  1.00  0.00           C  \nATOM    265  O   LEU A  18      47.219  39.976  50.416  1.00  0.00           O  \nATOM    266  CA  GLY A  19      48.481  41.873  47.752  1.00  0.00           C  \nATOM    267  HA2 GLY A  19      49.417  41.598  47.265  1.00  0.00           H  \nATOM    268  HA3 GLY A  19      47.690  42.149  47.055  1.00  0.00           H  \nATOM    269  N   GLY A  19      48.026  40.912  48.761  1.00  0.00           N  \nATOM    270  H   GLY A  19      48.203  39.942  48.543  1.00  0.00           H  \nATOM    271  C   GLY A  19      48.668  42.963  48.929  1.00  0.00           C  \nATOM    272  O   GLY A  19      49.154  42.412  49.906  1.00  0.00           O  \nATOM    273  CA  CYS A  20      48.264  45.751  48.926  1.00  0.00           C  \nATOM    274  HA  CYS A  20      48.771  46.143  49.808  1.00  0.00           H  \nATOM    275  N   CYS A  20      48.478  44.305  49.355  1.00  0.00           N  \nATOM    276  H   CYS A  20      48.843  44.311  50.296  1.00  0.00           H  \nATOM    277  CB  CYS A  20      46.878  46.498  49.181  1.00  0.00           C  \nATOM    278  HB2 CYS A  20      46.006  46.323  48.550  1.00  0.00           H  \nATOM    279  HB3 CYS A  20      46.988  47.569  49.011  1.00  0.00           H  \nATOM    280  SG  CYS A  20      46.114  46.361  50.806  1.00  0.00           S  \nATOM    281  HG  CYS A  20      47.036  47.046  51.488  1.00  0.00           H  \nATOM    282  C   CYS A  20      49.775  45.974  47.745  1.00  0.00           C  \nATOM    283  O   CYS A  20      50.234  44.985  48.295  1.00  0.00           O  \nATOM    284  CA  THR A  21      52.688  46.059  45.842  1.00  0.00           C  \nATOM    285  HA  THR A  21      53.550  45.505  46.212  1.00  0.00           H  \nATOM    286  N   THR A  21      51.204  45.685  46.895  1.00  0.00           N  \nATOM    287  H   THR A  21      51.424  44.755  47.221  1.00  0.00           H  \nATOM    288  CB  THR A  21      52.516  45.733  44.358  1.00  0.00           C  \nATOM    289  HB  THR A  21      52.681  44.660  44.256  1.00  0.00           H  \nATOM    290  CG2 THR A  21      53.560  46.444  43.508  1.00  0.00           C  \nATOM    291 HG21 THR A  21      53.134  47.379  43.143  1.00  0.00           H  \nATOM    292 HG22 THR A  21      54.462  46.649  44.085  1.00  0.00           H  \nATOM    293 HG23 THR A  21      53.832  45.817  42.659  1.00  0.00           H  \nATOM    294  OG1 THR A  21      51.232  46.041  43.866  1.00  0.00           O  \nATOM    295  HG1 THR A  21      50.994  45.313  43.286  1.00  0.00           H  \nATOM    296  C   THR A  21      52.846  47.878  46.511  1.00  0.00           C  \nATOM    297  O   THR A  21      51.812  47.616  46.984  1.00  0.00           O  \nATOM    298  CA  CYS A  22      52.528  51.037  48.084  1.00  0.00           C  \nATOM    299  HA  CYS A  22      51.713  51.760  48.036  1.00  0.00           H  \nATOM    300  N   CYS A  22      52.468  49.344  47.364  1.00  0.00           N  \nATOM    301  H   CYS A  22      51.532  49.099  47.652  1.00  0.00           H  \nATOM    302  CB  CYS A  22      53.365  50.748  49.352  1.00  0.00           C  \nATOM    303  HB2 CYS A  22      52.780  50.128  50.032  1.00  0.00           H  \nATOM    304  HB3 CYS A  22      53.701  51.628  49.900  1.00  0.00           H  \nATOM    305  SG  CYS A  22      54.894  49.862  48.893  1.00  0.00           S  \nATOM    306  HG  CYS A  22      54.369  48.634  48.852  1.00  0.00           H  \nATOM    307  C   CYS A  22      53.417  51.166  46.631  1.00  0.00           C  \nATOM    308  O   CYS A  22      53.567  52.357  46.452  1.00  0.00           O  \nATOM    309  CA  ASP A  23      54.956  49.976  44.133  1.00  0.00           C  \nATOM    310  HA  ASP A  23      55.459  49.009  44.162  1.00  0.00           H  \nATOM    311  N   ASP A  23      54.060  50.258  45.516  1.00  0.00           N  \nATOM    312  H   ASP A  23      53.895  49.330  45.880  1.00  0.00           H  \nATOM    313  CB  ASP A  23      54.212  50.193  42.796  1.00  0.00           C  \nATOM    314  HB2 ASP A  23      54.938  50.372  42.002  1.00  0.00           H  \nATOM    315  HB3 ASP A  23      53.792  49.227  42.517  1.00  0.00           H  \nATOM    316  CG  ASP A  23      53.050  51.197  42.723  1.00  0.00           C  \nATOM    317  OD1 ASP A  23      51.951  50.786  42.282  1.00  0.00           O  \nATOM    318  OD2 ASP A  23      53.209  52.409  42.972  1.00  0.00           O  \nATOM    319  C   ASP A  23      55.902  51.142  44.892  1.00  0.00           C  \nATOM    320  O   ASP A  23      56.916  51.058  44.211  1.00  0.00           O  \nATOM    321  CA  ASP A  24      56.504  53.373  47.040  1.00  0.00           C  \nATOM    322  HA  ASP A  24      55.717  54.023  47.422  1.00  0.00           H  \nATOM    323  N   ASP A  24      55.914  52.094  46.143  1.00  0.00           N  \nATOM    324  H   ASP A  24      55.112  51.817  46.690  1.00  0.00           H  \nATOM    325  CB  ASP A  24      57.531  52.955  48.105  1.00  0.00           C  \nATOM    326  HB2 ASP A  24      58.015  53.857  48.480  1.00  0.00           H  \nATOM    327  HB3 ASP A  24      56.984  52.512  48.937  1.00  0.00           H  \nATOM    328  CG  ASP A  24      58.623  51.972  47.649  1.00  0.00           C  \nATOM    329  OD1 ASP A  24      59.184  52.103  46.537  1.00  0.00           O  \nATOM    330  OD2 ASP A  24      59.007  51.092  48.454  1.00  0.00           O  \nATOM    331  C   ASP A  24      57.072  53.868  45.657  1.00  0.00           C  \nATOM    332  O   ASP A  24      57.409  55.002  45.559  1.00  0.00           O  \nATOM    333  CA  ARG A  25      56.899  53.528  42.937  1.00  0.00           C  \nATOM    334  HA  ARG A  25      57.614  54.307  42.670  1.00  0.00           H  \nATOM    335  N   ARG A  25      57.076  53.195  44.330  1.00  0.00           N  \nATOM    336  H   ARG A  25      57.682  52.398  44.461  1.00  0.00           H  \nATOM    337  CB  ARG A  25      56.645  52.566  41.776  1.00  0.00           C  \nATOM    338  HB2 ARG A  25      57.288  51.688  41.825  1.00  0.00           H  \nATOM    339  HB3 ARG A  25      55.589  52.294  41.785  1.00  0.00           H  \nATOM    340  CG  ARG A  25      56.922  53.311  40.449  1.00  0.00           C  \nATOM    341  HG2 ARG A  25      56.545  52.683  39.642  1.00  0.00           H  \nATOM    342  HG3 ARG A  25      56.303  54.208  40.447  1.00  0.00           H  \nATOM    343  CD  ARG A  25      58.364  53.732  40.049  1.00  0.00           C  \nATOM    344  HD2 ARG A  25      58.730  53.026  39.304  1.00  0.00           H  \nATOM    345  HD3 ARG A  25      58.293  54.703  39.559  1.00  0.00           H  \nATOM    346  NE  ARG A  25      59.362  53.787  41.146  1.00  0.00           N  \nATOM    347  HE  ARG A  25      59.466  52.954  41.707  1.00  0.00           H  \nATOM    348  CZ  ARG A  25      60.131  54.805  41.501  1.00  0.00           C  \nATOM    349  NH1 ARG A  25      60.135  55.948  40.878  1.00  0.00           N  \nATOM    350 HH11 ARG A  25      60.760  56.683  41.176  1.00  0.00           H  \nATOM    351 HH12 ARG A  25      59.520  56.088  40.089  1.00  0.00           H  \nATOM    352  NH2 ARG A  25      60.933  54.702  42.519  1.00  0.00           N  \nATOM    353 HH21 ARG A  25      61.495  55.493  42.799  1.00  0.00           H  \nATOM    354 HH22 ARG A  25      60.978  53.846  43.053  1.00  0.00           H  \nATOM    355  C   ARG A  25      55.466  54.472  43.878  1.00  0.00           C  \nATOM    356  O   ARG A  25      55.270  53.683  44.671  1.00  0.00           O  \nATOM    357  CA  SER A  26      53.078  55.785  46.198  1.00  0.00           C  \nATOM    358  HA  SER A  26      52.948  55.190  47.102  1.00  0.00           H  \nATOM    359  N   SER A  26      54.343  54.937  45.115  1.00  0.00           N  \nATOM    360  H   SER A  26      54.339  54.127  45.719  1.00  0.00           H  \nATOM    361  CB  SER A  26      51.732  55.902  45.474  1.00  0.00           C  \nATOM    362  HB2 SER A  26      51.014  56.418  46.112  1.00  0.00           H  \nATOM    363  HB3 SER A  26      51.356  54.898  45.277  1.00  0.00           H  \nATOM    364  OG  SER A  26      51.853  56.596  44.243  1.00  0.00           O  \nATOM    365  HG  SER A  26      52.180  57.480  44.426  1.00  0.00           H  \nATOM    366  C   SER A  26      53.747  57.161  46.566  1.00  0.00           C  \nATOM    367  O   SER A  26      54.401  57.686  45.660  1.00  0.00           O  \nATOM    368  CA  ASP A  27      52.982  57.391  49.028  1.00  0.00           C  \nATOM    369  HA  ASP A  27      53.327  58.123  49.759  1.00  0.00           H  \nATOM    370  N   ASP A  27      53.712  57.788  47.795  1.00  0.00           N  \nATOM    371  H   ASP A  27      54.226  58.656  47.845  1.00  0.00           H  \nATOM    372  CB  ASP A  27      51.461  57.678  48.976  1.00  0.00           C  \nATOM    373  HB2 ASP A  27      51.018  57.370  49.923  1.00  0.00           H  \nATOM    374  HB3 ASP A  27      51.007  57.077  48.187  1.00  0.00           H  \nATOM    375  CG  ASP A  27      51.087  59.157  48.768  1.00  0.00           C  \nATOM    376  OD1 ASP A  27      51.956  60.055  48.854  1.00  0.00           O  \nATOM    377  OD2 ASP A  27      49.885  59.444  48.567  1.00  0.00           O  \nATOM    378  C   ASP A  27      53.477  56.091  49.706  1.00  0.00           C  \nATOM    379  O   ASP A  27      54.649  55.960  50.093  1.00  0.00           O  \nATOM    380  CA  GLY A  28      52.285  53.842  50.359  1.00  0.00           C  \nATOM    381  HA2 GLY A  28      52.453  53.849  51.436  1.00  0.00           H  \nATOM    382  HA3 GLY A  28      53.098  53.309  49.867  1.00  0.00           H  \nATOM    383  N   GLY A  28      52.473  55.187  49.813  1.00  0.00           N  \nATOM    384  H   GLY A  28      51.602  55.566  49.470  1.00  0.00           H  \nATOM    385  C   GLY A  28      50.896  53.111  50.038  1.00  0.00           C  \nATOM    386  O   GLY A  28      50.812  52.120  50.773  1.00  0.00           O  \nATOM    387  CA  LEU A  29      48.436  52.662  48.779  1.00  0.00           C  \nATOM    388  HA  LEU A  29      48.343  52.907  47.721  1.00  0.00           H  \nATOM    389  N   LEU A  29      49.800  53.474  49.165  1.00  0.00           N  \nATOM    390  H   LEU A  29      49.939  54.314  48.621  1.00  0.00           H  \nATOM    391  CB  LEU A  29      47.120  53.233  49.324  1.00  0.00           C  \nATOM    392  HB2 LEU A  29      47.045  52.997  50.386  1.00  0.00           H  \nATOM    393  HB3 LEU A  29      47.147  54.318  49.218  1.00  0.00           H  \nATOM    394  CG  LEU A  29      45.877  52.697  48.595  1.00  0.00           C  \nATOM    395  HG  LEU A  29      45.863  51.611  48.681  1.00  0.00           H  \nATOM    396  CD1 LEU A  29      45.808  53.029  47.100  1.00  0.00           C  \nATOM    397 HD11 LEU A  29      45.933  54.099  46.937  1.00  0.00           H  \nATOM    398 HD12 LEU A  29      46.585  52.490  46.557  1.00  0.00           H  \nATOM    399 HD13 LEU A  29      44.848  52.710  46.695  1.00  0.00           H  \nATOM    400  CD2 LEU A  29      44.614  53.277  49.235  1.00  0.00           C  \nATOM    401 HD21 LEU A  29      43.756  52.703  48.884  1.00  0.00           H  \nATOM    402 HD22 LEU A  29      44.506  54.326  48.960  1.00  0.00           H  \nATOM    403 HD23 LEU A  29      44.662  53.213  50.322  1.00  0.00           H  \nATOM    404  C   LEU A  29      48.687  51.173  48.716  1.00  0.00           C  \nATOM    405  O   LEU A  29      49.747  51.552  48.724  1.00  0.00           O  \nATOM    406  CA  CYS A  30      49.512  48.832  48.514  1.00  0.00           C  \nATOM    407  HA  CYS A  30      50.493  48.357  48.498  1.00  0.00           H  \nATOM    408  N   CYS A  30      49.685  50.239  48.802  1.00  0.00           N  \nATOM    409  H   CYS A  30      50.581  50.451  49.216  1.00  0.00           H  \nATOM    410  CB  CYS A  30      49.107  48.543  50.014  1.00  0.00           C  \nATOM    411  HB2 CYS A  30      48.237  47.931  50.254  1.00  0.00           H  \nATOM    412  HB3 CYS A  30      48.803  49.430  50.570  1.00  0.00           H  \nATOM    413  SG  CYS A  30      50.542  47.886  50.936  1.00  0.00           S  \nATOM    414  HG  CYS A  30      51.073  49.079  51.220  1.00  0.00           H  \nATOM    415  C   CYS A  30      48.989  48.733  47.052  1.00  0.00           C  \nATOM    416  O   CYS A  30      49.089  49.891  46.919  1.00  0.00           O  \nATOM    417  CA  LYS A  31      48.087  48.284  44.859  1.00  0.00           C  \nATOM    418  HA  LYS A  31      48.860  47.625  44.464  1.00  0.00           H  \nATOM    419  N   LYS A  31      48.586  49.203  45.846  1.00  0.00           N  \nATOM    420  H   LYS A  31      48.589  50.174  45.569  1.00  0.00           H  \nATOM    421  CB  LYS A  31      47.423  49.148  43.759  1.00  0.00           C  \nATOM    422  HB2 LYS A  31      46.736  48.487  43.232  1.00  0.00           H  \nATOM    423  HB3 LYS A  31      48.212  49.459  43.074  1.00  0.00           H  \nATOM    424  CG  LYS A  31      46.666  50.423  44.254  1.00  0.00           C  \nATOM    425  HG2 LYS A  31      47.349  51.035  44.844  1.00  0.00           H  \nATOM    426  HG3 LYS A  31      45.854  50.114  44.912  1.00  0.00           H  \nATOM    427  CD  LYS A  31      46.102  51.430  43.235  1.00  0.00           C  \nATOM    428  HD2 LYS A  31      45.170  51.073  42.797  1.00  0.00           H  \nATOM    429  HD3 LYS A  31      45.824  52.319  43.801  1.00  0.00           H  \nATOM    430  CE  LYS A  31      47.086  51.868  42.139  1.00  0.00           C  \nATOM    431  HE2 LYS A  31      46.829  52.886  41.847  1.00  0.00           H  \nATOM    432  HE3 LYS A  31      48.089  51.902  42.565  1.00  0.00           H  \nATOM    433  NZ  LYS A  31      47.043  51.001  40.934  1.00  0.00           N  \nATOM    434  HZ1 LYS A  31      47.135  50.020  41.157  1.00  0.00           H  \nATOM    435  HZ2 LYS A  31      47.770  51.259  40.283  1.00  0.00           H  \nATOM    436  HZ3 LYS A  31      46.156  51.099  40.461  1.00  0.00           H  \nATOM    437  C   LYS A  31      47.097  47.510  45.791  1.00  0.00           C  \nATOM    438  O   LYS A  31      46.854  47.977  46.891  1.00  0.00           O  \nATOM    439  CA  ARG A  32      45.575  45.560  46.468  1.00  0.00           C  \nATOM    440  HA  ARG A  32      45.942  45.061  47.365  1.00  0.00           H  \nATOM    441  N   ARG A  32      46.428  46.387  45.569  1.00  0.00           N  \nATOM    442  H   ARG A  32      46.396  46.215  44.575  1.00  0.00           H  \nATOM    443  CB  ARG A  32      44.084  45.961  46.385  1.00  0.00           C  \nATOM    444  HB2 ARG A  32      43.707  45.760  45.382  1.00  0.00           H  \nATOM    445  HB3 ARG A  32      44.035  47.041  46.527  1.00  0.00           H  \nATOM    446  CG  ARG A  32      43.130  45.347  47.427  1.00  0.00           C  \nATOM    447  HG2 ARG A  32      42.173  45.862  47.347  1.00  0.00           H  \nATOM    448  HG3 ARG A  32      43.531  45.553  48.420  1.00  0.00           H  \nATOM    449  CD  ARG A  32      42.872  43.841  47.314  1.00  0.00           C  \nATOM    450  HD2 ARG A  32      43.816  43.302  47.382  1.00  0.00           H  \nATOM    451  HD3 ARG A  32      42.274  43.544  48.175  1.00  0.00           H  \nATOM    452  NE  ARG A  32      42.178  43.461  46.050  1.00  0.00           N  \nATOM    453  HE  ARG A  32      42.724  43.518  45.203  1.00  0.00           H  \nATOM    454  CZ  ARG A  32      40.990  42.914  45.927  1.00  0.00           C  \nATOM    455  NH1 ARG A  32      40.171  42.737  46.909  1.00  0.00           N  \nATOM    456 HH11 ARG A  32      39.268  42.319  46.738  1.00  0.00           H  \nATOM    457 HH12 ARG A  32      40.413  43.110  47.816  1.00  0.00           H  \nATOM    458  NH2 ARG A  32      40.564  42.534  44.748  1.00  0.00           N  \nATOM    459 HH21 ARG A  32      41.089  42.822  43.935  1.00  0.00           H  \nATOM    460 HH22 ARG A  32      39.726  41.975  44.666  1.00  0.00           H  \nATOM    461  C   ARG A  32      46.027  44.387  45.494  1.00  0.00           C  \nATOM    462  O   ARG A  32      45.922  43.283  46.000  1.00  0.00           O  \nATOM    463  CA  ASN A  33      47.158  43.511  43.125  1.00  0.00           C  \nATOM    464  HA  ASN A  33      48.236  43.562  43.282  1.00  0.00           H  \nATOM    465  N   ASN A  33      46.543  44.472  44.174  1.00  0.00           N  \nATOM    466  H   ASN A  33      46.370  45.343  43.693  1.00  0.00           H  \nATOM    467  CB  ASN A  33      46.737  42.058  43.518  1.00  0.00           C  \nATOM    468  HB2 ASN A  33      47.216  41.349  42.842  1.00  0.00           H  \nATOM    469  HB3 ASN A  33      47.128  41.816  44.506  1.00  0.00           H  \nATOM    470  CG  ASN A  33      45.235  41.742  43.491  1.00  0.00           C  \nATOM    471  OD1 ASN A  33      44.800  40.697  43.953  1.00  0.00           O  \nATOM    472  ND2 ASN A  33      44.391  42.587  42.936  1.00  0.00           N  \nATOM    473 HD21 ASN A  33      43.432  42.296  42.815  1.00  0.00           H  \nATOM    474 HD22 ASN A  33      44.756  43.431  42.517  1.00  0.00           H  \nATOM    475  C   ASN A  33      47.022  43.439  41.601  1.00  0.00           C  \nATOM    476  O   ASN A  33      46.323  44.386  41.891  1.00  0.00           O  \nATOM    477  CA  GLY A  34      46.557  43.518  39.119  1.00  0.00           C  \nATOM    478  HA2 GLY A  34      46.025  42.592  38.899  1.00  0.00           H  \nATOM    479  HA3 GLY A  34      47.551  43.613  38.682  1.00  0.00           H  \nATOM    480  N   GLY A  34      46.521  43.858  40.473  1.00  0.00           N  \nATOM    481  H   GLY A  34      45.924  44.669  40.536  1.00  0.00           H  \nATOM    482  C   GLY A  34      45.629  44.853  38.861  1.00  0.00           C  \nATOM    483  O   GLY A  34      45.450  44.896  37.655  1.00  0.00           O  \nATOM    484  CA  ASP A  35      44.332  47.060  40.504  1.00  0.00           C  \nATOM    485  HA  ASP A  35      43.807  47.738  39.831  1.00  0.00           H  \nATOM    486  N   ASP A  35      44.928  45.996  39.475  1.00  0.00           N  \nATOM    487  H   ASP A  35      44.561  46.361  38.608  1.00  0.00           H  \nATOM    488  CB  ASP A  35      43.162  46.467  41.327  1.00  0.00           C  \nATOM    489  HB2 ASP A  35      43.504  45.564  41.832  1.00  0.00           H  \nATOM    490  HB3 ASP A  35      42.868  47.176  42.102  1.00  0.00           H  \nATOM    491  CG  ASP A  35      41.890  46.153  40.506  1.00  0.00           C  \nATOM    492  OD1 ASP A  35      41.868  46.326  39.260  1.00  0.00           O  \nATOM    493  OD2 ASP A  35      40.868  45.749  41.109  1.00  0.00           O  \nATOM    494  C   ASP A  35      45.234  48.098  41.151  1.00  0.00           C  \nATOM    495  O   ASP A  35      46.389  48.186  40.678  1.00  0.00           O  \nATOM    496  OXT ASP A  35      44.726  48.888  41.967  1.00  0.00           O  \nTER     497      ASP A  35\nEND\n", hi = [1, 4, 5, 6, 7, 8, 9, 11, 14, 22, 24, 25, 26, 27, 28];
+  var v, model;
+  var legends = {
+    conf: 'Colour by <b>per-residue confidence</b> (ensemble self-consistency): '
+        + '<span style="color:#3b82f6">blue=high</span> → '
+        + '<span style="color:#ef4444">red=low</span>. Descriptive, not calibrated.',
+    spectrum: 'Colour by N→C terminus (spectrum).',
+    ss: 'Colour by secondary structure (helix/sheet/coil).',
+    error: '<span style="color:#e74c3c">Red</span> = residues with the largest conflict/error.'
+  };
+  function apply(scheme) {
+    if (!model) return;
+    v.setStyle({}, {cartoon: {color: "spectrum"}});
+    if (scheme === "conf") {
+      v.setStyle({}, {cartoon: {colorscheme: {prop:'b', gradient:'rwb', min:0, max:100}}});
+    } else if (scheme === "ss") {
+      v.setStyle({}, {cartoon: {colorscheme: 'ssPyMOL'}});
+    } else if (scheme === "error") {
+      v.setStyle({}, {cartoon: {color: "0x4b5563"}});
+      if (hi.length) v.setStyle({resi: hi}, {cartoon: {color: "0xe74c3c"},
+                                   stick: {radius: 0.18, color: "0xe74c3c"}});
+    }
+    v.render();
+    document.getElementById('vlegend').innerHTML = legends[scheme] || '';
+  }
+  function draw() {
+    if (!window.$3Dmol) { setTimeout(draw, 120); return; }
+    v = $3Dmol.createViewer("viewport", {backgroundColor: "0x211f1a"});
+    model = v.addModel(pdb, "pdb");
+    v.zoomTo();
+    apply("spectrum");
+    document.querySelectorAll('.vbtn[data-scheme]').forEach(function(b) {
+      b.onclick = function() { apply(b.getAttribute('data-scheme')); };
+    });
+  }
+  draw();
+})();
+</script>
+
+  <h2>Details</h2>
+  <details open><summary>Per-residue map (secondary structure + confidence)</summary><div class="section-body"><p class="k">Secondary structure</p><svg viewBox="0 0 1000 14" preserveAspectRatio="none" style="width:100%;height:18px;border-radius:4px"><rect x="0.00" y="0" width="28.57" height="14" fill="#3b4252"><title>F1 C</title></rect><rect x="28.57" y="0" width="28.57" height="14" fill="#e06c75"><title>C2 H</title></rect><rect x="57.14" y="0" width="28.57" height="14" fill="#e0a36c"><title>G3 G</title></rect><rect x="85.71" y="0" width="28.57" height="14" fill="#e06c75"><title>E4 H</title></rect><rect x="114.29" y="0" width="28.57" height="14" fill="#e06c75"><title>T5 H</title></rect><rect x="142.86" y="0" width="28.57" height="14" fill="#e06c75"><title>C6 H</title></rect><rect x="171.43" y="0" width="28.57" height="14" fill="#e06c75"><title>R7 H</title></rect><rect x="200.00" y="0" width="28.57" height="14" fill="#e5c07b"><title>V8 E</title></rect><rect x="228.57" y="0" width="28.57" height="14" fill="#e06c75"><title>I9 H</title></rect><rect x="257.14" y="0" width="28.57" height="14" fill="#e06c75"><title>P10 H</title></rect><rect x="285.71" y="0" width="28.57" height="14" fill="#e06c75"><title>V11 H</title></rect><rect x="314.29" y="0" width="28.57" height="14" fill="#e06c75"><title>C12 H</title></rect><rect x="342.86" y="0" width="28.57" height="14" fill="#e06c75"><title>T13 H</title></rect><rect x="371.43" y="0" width="28.57" height="14" fill="#e0a36c"><title>Y14 G</title></rect><rect x="400.00" y="0" width="28.57" height="14" fill="#e06c75"><title>S15 H</title></rect><rect x="428.57" y="0" width="28.57" height="14" fill="#e06c75"><title>A16 H</title></rect><rect x="457.14" y="0" width="28.57" height="14" fill="#e06c75"><title>A17 H</title></rect><rect x="485.71" y="0" width="28.57" height="14" fill="#e06c75"><title>L18 H</title></rect><rect x="514.29" y="0" width="28.57" height="14" fill="#e06c75"><title>G19 H</title></rect><rect x="542.86" y="0" width="28.57" height="14" fill="#e06c75"><title>C20 H</title></rect><rect x="571.43" y="0" width="28.57" height="14" fill="#e06c75"><title>T21 H</title></rect><rect x="600.00" y="0" width="28.57" height="14" fill="#e06c75"><title>C22 H</title></rect><rect x="628.57" y="0" width="28.57" height="14" fill="#e06c75"><title>D23 H</title></rect><rect x="657.14" y="0" width="28.57" height="14" fill="#e06c75"><title>D24 H</title></rect><rect x="685.71" y="0" width="28.57" height="14" fill="#e06c75"><title>R25 H</title></rect><rect x="714.29" y="0" width="28.57" height="14" fill="#e5c07b"><title>S26 E</title></rect><rect x="742.86" y="0" width="28.57" height="14" fill="#e06c75"><title>D27 H</title></rect><rect x="771.43" y="0" width="28.57" height="14" fill="#e0a36c"><title>G28 G</title></rect><rect x="800.00" y="0" width="28.57" height="14" fill="#e06c75"><title>L29 H</title></rect><rect x="828.57" y="0" width="28.57" height="14" fill="#e0a36c"><title>C30 G</title></rect><rect x="857.14" y="0" width="28.57" height="14" fill="#e0a36c"><title>K31 G</title></rect><rect x="885.71" y="0" width="28.57" height="14" fill="#e06c75"><title>R32 H</title></rect><rect x="914.29" y="0" width="28.57" height="14" fill="#e5c07b"><title>N33 E</title></rect><rect x="942.86" y="0" width="28.57" height="14" fill="#e06c75"><title>G34 H</title></rect><rect x="971.43" y="0" width="28.57" height="14" fill="#e5c07b"><title>D35 E</title></rect></svg><p class="muted" style="font-size:11px"><span style="color:#e06c75">█</span> helix <span style="color:#e5c07b">█</span> strand <span style="color:#3b4252">█</span> loop</p></div></details><details open><summary>Ensemble · Flexibility · Confidence</summary><div class="section-body"><table class='kv'><tr><td class='k'>ensemble_pdb</td><td class='v'>general_benchmark\model_refinement\esmfold\1R1F\1R1F.ensemble.pdb</td></tr><tr><td class='k'>n_models</td><td class='v'>2</td></tr></table><p class='k'>Flexibility (RMSF)</p><table class='kv'><tr><td class='k'>most_flexible_residues</td><td class='v'>[4, 22, 29, 26, 3]</td></tr><tr><td class='k'>n_models</td><td class='v'>2</td></tr><tr><td class='k'>rmsf_max</td><td class='v'>0.06</td></tr><tr><td class='k'>rmsf_mean</td><td class='v'>0.031</td></tr></table></div></details><details><summary>Secondary structure (DSSP-like)</summary><div class="section-body"><table class='kv'><tr><td class='k'>coil</td><td class='v'>1</td></tr><tr><td class='k'>helix</td><td class='v'>25</td></tr><tr><td class='k'>strand</td><td class='v'>4</td></tr><tr><td class='k'>three_ten</td><td class='v'>5</td></tr></table><pre class='raw' style='white-space:pre-wrap'>CHGHHHHEHHHHHGHHHHHHHHHHHEHGHGGHEHE</pre></div></details><details open><summary>Predicted contact map <span class="badge">111</span></summary><div class="section-body"><table class='kv'><tr><td class='k'>contacts</td><td class='v'>111</td></tr><tr><td class='k'>long-range (|i−j|≥6)</td><td class='v'>47</td></tr><tr><td class='k'>threshold (Å)</td><td class='v'>8.0</td></tr></table>
+<canvas id="cmap" width="420" height="420"
+        style="width:100%;max-width:420px;background:#211f1a;border:1px solid var(--line);border-radius:2px"></canvas>
+<p class="muted" style="font-size:11px">Predicted contacts (≤8Å Cα–Cα). Diagonal = sequence·
+  far from the diagonal = long-range tertiary contacts.</p>
+<script>
+(function() {
+  var pts = [[1, 3, 2], [1, 4, 3], [2, 4, 2], [2, 5, 3], [2, 6, 4], [2, 20, 18], [2, 29, 27], [2, 30, 28], [2, 32, 30], [3, 5, 2], [4, 6, 2], [4, 7, 3], [5, 7, 2], [5, 8, 3], [5, 9, 4], [6, 8, 2], [6, 9, 3], [6, 10, 4], [6, 12, 6], [6, 22, 16], [6, 27, 21], [6, 28, 22], [6, 29, 23], [6, 30, 24], [7, 9, 2], [7, 10, 3], [7, 27, 20], [7, 28, 21], [8, 10, 2], [8, 27, 19], [8, 28, 20], [9, 11, 2], [9, 12, 3], [10, 12, 2], [10, 27, 17], [10, 28, 18], [11, 13, 2], [11, 28, 17], [12, 14, 2], [12, 15, 3], [12, 22, 10], [12, 24, 12], [12, 28, 16], [12, 30, 18], [13, 15, 2], [14, 16, 2], [14, 17, 3], [14, 20, 6], [14, 21, 7], [14, 30, 16], [15, 17, 2], [15, 18, 3], [15, 19, 4], [15, 20, 5], [15, 30, 15], [16, 18, 2], [16, 19, 3], [16, 20, 4], [16, 21, 5], [17, 19, 2], [17, 20, 3], [18, 20, 2], [18, 30, 12], [18, 32, 14], [18, 33, 15], [19, 21, 2], [19, 30, 11], [19, 31, 12], [19, 32, 13], [19, 33, 14], [20, 22, 2], [20, 29, 9], [20, 30, 10], [20, 31, 11], [20, 32, 12], [20, 33, 13], [21, 23, 2], [21, 30, 9], [21, 31, 10], [21, 32, 11], [21, 33, 12], [22, 24, 2], [22, 25, 3], [22, 26, 4], [22, 27, 5], [22, 28, 6], [22, 29, 7], [22, 30, 8], [22, 31, 9], [23, 25, 2], [23, 26, 3], [23, 28, 5], [23, 30, 7], [23, 31, 8], [24, 26, 2], [24, 27, 3], [24, 28, 4], [26, 28, 2], [26, 29, 3], [27, 29, 2], [28, 30, 2], [29, 31, 2], [29, 32, 3], [30, 32, 2], [30, 33, 3], [31, 33, 2], [31, 34, 3], [31, 35, 4], [32, 34, 2], [32, 35, 3], [33, 35, 2]], N = 35;
+  var cv = document.getElementById('cmap'), ctx = cv.getContext('2d');
+  var S = cv.width, sc = S / N;
+  ctx.fillStyle = '#211f1a'; ctx.fillRect(0,0,S,S);
+  ctx.strokeStyle = '#3a372f'; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(S,S); ctx.stroke();
+  pts.forEach(function(p) {
+    var i=p[0]-1, j=p[1]-1, sep=p[2];
+    ctx.fillStyle = sep >= 12 ? '#58a6ff' : (sep >= 6 ? '#7ee2a8' : '#444c56');
+    ctx.fillRect(i*sc, j*sc, Math.max(1,sc), Math.max(1,sc));
+    ctx.fillRect(j*sc, i*sc, Math.max(1,sc), Math.max(1,sc));
+  });
+})();
+</script>
+</div></details><details open><summary>PAE-equivalent (per-pair positional error)</summary><div class="section-body">
+<p class='muted' style='font-size:12px'>mean=0.02Å · max=0.101Å · N=35</p>
+<canvas id="paemap" width="440" height="440"
+        style="width:100%;max-width:440px;background:#211f1a;border:1px solid var(--line);border-radius:2px"></canvas>
+<p class="muted" style="font-size:11px">PAE-equivalent: expected positional error of
+  residue j relative to i (Å, from the ensemble spread).
+  <span style="color:#2ecc71">green=confident</span> →
+  <span style="color:#e74c3c">red=uncertain</span>. Off-diagonal block = uncertain interface
+  between two rigid units (domains).</p>
+<script>
+(function() {
+  var M = [[0.0, 0.01, 0.04, 0.01, 0.01, 0.0, 0.0, 0.01, 0.0, 0.01, 0.0, 0.01, 0.03, 0.01, 0.02, 0.01, 0.02, 0.02, 0.04, 0.01, 0.01, 0.05, 0.02, 0.04, 0.01, 0.04, 0.03, 0.02, 0.02, 0.0, 0.03, 0.01, 0.03, 0.03, 0.03], [0.01, 0.0, 0.02, 0.07, 0.02, 0.02, 0.02, 0.01, 0.02, 0.02, 0.02, 0.0, 0.02, 0.01, 0.02, 0.02, 0.02, 0.02, 0.05, 0.01, 0.02, 0.04, 0.03, 0.03, 0.01, 0.04, 0.02, 0.03, 0.04, 0.0, 0.02, 0.05, 0.0, 0.0, 0.0], [0.04, 0.02, 0.0, 0.04, 0.01, 0.01, 0.0, 0.01, 0.0, 0.0, 0.01, 0.03, 0.04, 0.03, 0.04, 0.04, 0.03, 0.04, 0.07, 0.04, 0.06, 0.01, 0.07, 0.08, 0.06, 0.09, 0.07, 0.01, 0.08, 0.04, 0.02, 0.06, 0.02, 0.02, 0.02], [0.01, 0.07, 0.04, 0.0, 0.04, 0.07, 0.06, 0.03, 0.05, 0.07, 0.07, 0.06, 0.05, 0.06, 0.04, 0.05, 0.04, 0.05, 0.02, 0.06, 0.05, 0.1, 0.03, 0.01, 0.03, 0.0, 0.01, 0.08, 0.01, 0.07, 0.08, 0.02, 0.07, 0.06, 0.06], [0.01, 0.02, 0.01, 0.04, 0.0, 0.0, 0.02, 0.04, 0.0, 0.01, 0.01, 0.01, 0.01, 0.0, 0.01, 0.01, 0.0, 0.0, 0.03, 0.0, 0.03, 0.0, 0.05, 0.07, 0.05, 0.09, 0.08, 0.01, 0.08, 0.01, 0.01, 0.04, 0.01, 0.0, 0.0], [0.0, 0.02, 0.01, 0.07, 0.0, 0.0, 0.0, 0.0, 0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.02, 0.01, 0.0, 0.0, 0.04, 0.0, 0.03, 0.01, 0.04, 0.06, 0.04, 0.07, 0.06, 0.0, 0.07, 0.01, 0.01, 0.05, 0.0, 0.01, 0.0], [0.0, 0.02, 0.0, 0.06, 0.02, 0.0, 0.0, 0.0, 0.03, 0.01, 0.01, 0.0, 0.01, 0.0, 0.01, 0.01, 0.0, 0.0, 0.03, 0.01, 0.02, 0.01, 0.05, 0.07, 0.04, 0.07, 0.07, 0.01, 0.05, 0.0, 0.02, 0.04, 0.01, 0.0, 0.0], [0.01, 0.01, 0.01, 0.03, 0.04, 0.0, 0.0, 0.0, 0.02, 0.03, 0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0, 0.0, 0.03, 0.01, 0.01, 0.01, 0.02, 0.04, 0.01, 0.04, 0.04, 0.02, 0.05, 0.0, 0.03, 0.04, 0.01, 0.0, 0.01], [0.0, 0.02, 0.0, 0.05, 0.0, 0.02, 0.03, 0.02, 0.0, 0.02, 0.03, 0.01, 0.01, 0.01, 0.01, 0.0, 0.0, 0.01, 0.01, 0.02, 0.01, 0.02, 0.01, 0.0, 0.02, 0.01, 0.01, 0.04, 0.03, 0.02, 0.04, 0.04, 0.02, 0.02, 0.02], [0.01, 0.02, 0.0, 0.07, 0.01, 0.01, 0.01, 0.03, 0.02, 0.0, 0.02, 0.0, 0.01, 0.0, 0.02, 0.01, 0.0, 0.01, 0.02, 0.02, 0.0, 0.01, 0.01, 0.01, 0.01, 0.0, 0.0, 0.01, 0.01, 0.01, 0.03, 0.04, 0.01, 0.0, 0.01], [0.0, 0.02, 0.01, 0.07, 0.01, 0.01, 0.01, 0.02, 0.03, 0.02, 0.0, 0.01, 0.0, 0.0, 0.01, 0.01, 0.01, 0.01, 0.02, 0.01, 0.01, 0.04, 0.02, 0.02, 0.01, 0.03, 0.03, 0.01, 0.03, 0.0, 0.01, 0.05, 0.01, 0.01, 0.01], [0.01, 0.0, 0.03, 0.06, 0.01, 0.01, 0.0, 0.01, 0.01, 0.0, 0.01, 0.0, 0.01, 0.01, 0.02, 0.01, 0.01, 0.0, 0.02, 0.01, 0.0, 0.03, 0.0, 0.0, 0.01, 0.01, 0.01, 0.0, 0.01, 0.0, 0.01, 0.05, 0.01, 0.01, 0.0], [0.03, 0.02, 0.04, 0.05, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0, 0.01, 0.0, 0.01, 0.02, 0.02, 0.01, 0.01, 0.03, 0.01, 0.02, 0.05, 0.0, 0.01, 0.01, 0.01, 0.02, 0.01, 0.03, 0.02, 0.01, 0.07, 0.03, 0.03, 0.03], [0.01, 0.01, 0.03, 0.06, 0.0, 0.01, 0.0, 0.01, 0.01, 0.0, 0.0, 0.01, 0.01, 0.0, 0.02, 0.02, 0.01, 0.0, 0.02, 0.0, 0.0, 0.03, 0.02, 0.03, 0.02, 0.01, 0.0, 0.0, 0.0, 0.0, 0.01, 0.05, 0.03, 0.02, 0.02], [0.02, 0.02, 0.04, 0.04, 0.01, 0.02, 0.01, 0.01, 0.01, 0.02, 0.01, 0.02, 0.02, 0.02, 0.0, 0.0, 0.02, 0.0, 0.02, 0.02, 0.01, 0.03, 0.0, 0.01, 0.01, 0.03, 0.03, 0.02, 0.03, 0.02, 0.02, 0.06, 0.03, 0.02, 0.03], [0.01, 0.02, 0.04, 0.05, 0.01, 0.01, 0.01, 0.01, 0.0, 0.01, 0.01, 0.01, 0.02, 0.02, 0.0, 0.0, 0.03, 0.01, 0.01, 0.01, 0.0, 0.02, 0.01, 0.01, 0.01, 0.0, 0.01, 0.01, 0.0, 0.01, 0.02, 0.04, 0.03, 0.02, 0.02], [0.02, 0.02, 0.03, 0.04, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.01, 0.01, 0.01, 0.02, 0.03, 0.0, 0.01, 0.02, 0.0, 0.03, 0.01, 0.04, 0.03, 0.04, 0.01, 0.0, 0.01, 0.01, 0.02, 0.01, 0.02, 0.0, 0.01, 0.0], [0.02, 0.02, 0.04, 0.05, 0.0, 0.0, 0.0, 0.0, 0.01, 0.01, 0.01, 0.0, 0.01, 0.0, 0.0, 0.01, 0.01, 0.0, 0.02, 0.02, 0.0, 0.01, 0.01, 0.0, 0.0, 0.01, 0.01, 0.01, 0.0, 0.0, 0.01, 0.04, 0.01, 0.0, 0.01], [0.04, 0.05, 0.07, 0.02, 0.03, 0.04, 0.03, 0.03, 0.01, 0.02, 0.02, 0.02, 0.03, 0.02, 0.02, 0.01, 0.02, 0.02, 0.0, 0.04, 0.0, 0.01, 0.01, 0.01, 0.0, 0.02, 0.03, 0.02, 0.01, 0.02, 0.03, 0.04, 0.02, 0.0, 0.02], [0.01, 0.01, 0.04, 0.06, 0.0, 0.0, 0.01, 0.01, 0.02, 0.02, 0.01, 0.01, 0.01, 0.0, 0.02, 0.01, 0.0, 0.02, 0.04, 0.0, 0.0, 0.04, 0.01, 0.01, 0.02, 0.01, 0.01, 0.02, 0.03, 0.02, 0.01, 0.06, 0.0, 0.0, 0.0], [0.01, 0.02, 0.06, 0.05, 0.03, 0.03, 0.02, 0.01, 0.01, 0.0, 0.01, 0.0, 0.02, 0.0, 0.01, 0.0, 0.03, 0.0, 0.0, 0.0, 0.0, 0.02, 0.01, 0.01, 0.01, 0.01, 0.0, 0.02, 0.02, 0.02, 0.03, 0.04, 0.02, 0.02, 0.03], [0.05, 0.04, 0.01, 0.1, 0.0, 0.01, 0.01, 0.01, 0.02, 0.01, 0.04, 0.03, 0.05, 0.03, 0.03, 0.02, 0.01, 0.01, 0.01, 0.04, 0.02, 0.0, 0.04, 0.06, 0.03, 0.01, 0.01, 0.01, 0.08, 0.03, 0.05, 0.0, 0.02, 0.02, 0.03], [0.02, 0.03, 0.07, 0.03, 0.05, 0.04, 0.05, 0.02, 0.01, 0.01, 0.02, 0.0, 0.0, 0.02, 0.0, 0.01, 0.04, 0.01, 0.01, 0.01, 0.01, 0.04, 0.0, 0.0, 0.01, 0.0, 0.01, 0.04, 0.01, 0.02, 0.02, 0.03, 0.0, 0.01, 0.03], [0.04, 0.03, 0.08, 0.01, 0.07, 0.06, 0.07, 0.04, 0.0, 0.01, 0.02, 0.0, 0.01, 0.03, 0.01, 0.01, 0.03, 0.0, 0.01, 0.01, 0.01, 0.06, 0.0, 0.0, 0.01, 0.02, 0.02, 0.07, 0.02, 0.02, 0.01, 0.04, 0.0, 0.01, 0.02], [0.01, 0.01, 0.06, 0.03, 0.05, 0.04, 0.04, 0.01, 0.02, 0.01, 0.01, 0.01, 0.01, 0.02, 0.01, 0.01, 0.04, 0.0, 0.0, 0.02, 0.01, 0.03, 0.01, 0.01, 0.0, 0.03, 0.02, 0.03, 0.03, 0.01, 0.01, 0.02, 0.0, 0.02, 0.02], [0.04, 0.04, 0.09, 0.0, 0.09, 0.07, 0.07, 0.04, 0.01, 0.0, 0.03, 0.01, 0.01, 0.01, 0.03, 0.0, 0.01, 0.01, 0.02, 0.01, 0.01, 0.01, 0.0, 0.02, 0.03, 0.0, 0.01, 0.05, 0.01, 0.02, 0.01, 0.04, 0.01, 0.01, 0.0], [0.03, 0.02, 0.07, 0.01, 0.08, 0.06, 0.07, 0.04, 0.01, 0.0, 0.03, 0.01, 0.02, 0.0, 0.03, 0.01, 0.0, 0.01, 0.03, 0.01, 0.0, 0.01, 0.01, 0.02, 0.02, 0.01, 0.0, 0.02, 0.02, 0.01, 0.02, 0.04, 0.01, 0.01, 0.01], [0.02, 0.03, 0.01, 0.08, 0.01, 0.0, 0.01, 0.02, 0.04, 0.01, 0.01, 0.0, 0.01, 0.0, 0.02, 0.01, 0.01, 0.01, 0.02, 0.02, 0.02, 0.01, 0.04, 0.07, 0.03, 0.05, 0.02, 0.0, 0.0, 0.0, 0.02, 0.04, 0.01, 0.01, 0.0], [0.02, 0.04, 0.08, 0.01, 0.08, 0.07, 0.05, 0.05, 0.03, 0.01, 0.03, 0.01, 0.03, 0.0, 0.03, 0.0, 0.01, 0.0, 0.01, 0.03, 0.02, 0.08, 0.01, 0.02, 0.03, 0.01, 0.02, 0.0, 0.0, 0.02, 0.07, 0.01, 0.05, 0.05, 0.05], [0.0, 0.0, 0.04, 0.07, 0.01, 0.01, 0.0, 0.0, 0.02, 0.01, 0.0, 0.0, 0.02, 0.0, 0.02, 0.01, 0.02, 0.0, 0.02, 0.02, 0.02, 0.03, 0.02, 0.02, 0.01, 0.02, 0.01, 0.0, 0.02, 0.0, 0.01, 0.04, 0.0, 0.0, 0.01], [0.03, 0.02, 0.02, 0.08, 0.01, 0.01, 0.02, 0.03, 0.04, 0.03, 0.01, 0.01, 0.01, 0.01, 0.02, 0.02, 0.01, 0.01, 0.03, 0.01, 0.03, 0.05, 0.02, 0.01, 0.01, 0.01, 0.02, 0.02, 0.07, 0.01, 0.0, 0.01, 0.01, 0.02, 0.02], [0.01, 0.05, 0.06, 0.02, 0.04, 0.05, 0.04, 0.04, 0.04, 0.04, 0.05, 0.05, 0.07, 0.05, 0.06, 0.04, 0.02, 0.04, 0.04, 0.06, 0.04, 0.0, 0.03, 0.04, 0.02, 0.04, 0.04, 0.04, 0.01, 0.04, 0.01, 0.0, 0.05, 0.05, 0.04], [0.03, 0.0, 0.02, 0.07, 0.01, 0.0, 0.01, 0.01, 0.02, 0.01, 0.01, 0.01, 0.03, 0.03, 0.03, 0.03, 0.0, 0.01, 0.02, 0.0, 0.02, 0.02, 0.0, 0.0, 0.0, 0.01, 0.01, 0.01, 0.05, 0.0, 0.01, 0.05, 0.0, 0.01, 0.01], [0.03, 0.0, 0.02, 0.06, 0.0, 0.01, 0.0, 0.0, 0.02, 0.0, 0.01, 0.01, 0.03, 0.02, 0.02, 0.02, 0.01, 0.0, 0.0, 0.0, 0.02, 0.02, 0.01, 0.01, 0.02, 0.01, 0.01, 0.01, 0.05, 0.0, 0.02, 0.05, 0.01, 0.0, 0.0], [0.03, 0.0, 0.02, 0.06, 0.0, 0.0, 0.0, 0.01, 0.02, 0.01, 0.01, 0.0, 0.03, 0.02, 0.03, 0.02, 0.0, 0.01, 0.02, 0.0, 0.03, 0.03, 0.03, 0.02, 0.02, 0.0, 0.01, 0.0, 0.05, 0.01, 0.02, 0.04, 0.01, 0.0, 0.0]], N = 35;
+  var cv = document.getElementById('paemap'), ctx = cv.getContext('2d');
+  var S = cv.width, sc = S / N, vmax = 0.101 || 5;
+  for (var i = 0; i < N; i++) for (var j = 0; j < N; j++) {
+    var t = Math.min(1, M[i][j] / vmax);
+    var r = Math.round(46 + (231 - 46) * t), g = Math.round(204 - (204 - 76) * t),
+        b = Math.round(113 - (113 - 60) * t);
+    ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+    ctx.fillRect(j * sc, i * sc, Math.max(1, sc), Math.max(1, sc));
+  }
+})();
+</script>
+</div></details><details><summary>Hydrogen-bond network (backbone) <span class="badge">17</span></summary><div class="section-body"><table class='kv'><tr><td class='k'>total</td><td class='v'>17</td></tr><tr><td class='k'>helix</td><td class='v'>16</td></tr><tr><td class='k'>sheet</td><td class='v'>1</td></tr></table><table class='data'><thead><tr><th>partner_a</th><th>partner_b</th><th>kind</th></tr></thead><tbody><tr><td>C2</td><td>C6</td><td>helix</td></tr><tr><td>C6</td><td>P10</td><td>helix</td></tr><tr><td>R7</td><td>V11</td><td>helix</td></tr><tr><td>I9</td><td>T13</td><td>helix</td></tr><tr><td>V11</td><td>S15</td><td>helix</td></tr><tr><td>C12</td><td>A16</td><td>helix</td></tr><tr><td>T13</td><td>A17</td><td>helix</td></tr><tr><td>S15</td><td>G19</td><td>helix</td></tr><tr><td>A16</td><td>C20</td><td>helix</td></tr><tr><td>A17</td><td>T21</td><td>helix</td></tr><tr><td>L18</td><td>C22</td><td>helix</td></tr><tr><td>G19</td><td>D23</td><td>helix</td></tr><tr><td>C20</td><td>D24</td><td>helix</td></tr><tr><td>T21</td><td>R25</td><td>helix</td></tr><tr><td>D23</td><td>D27</td><td>helix</td></tr><tr><td>R25</td><td>L29</td><td>helix</td></tr><tr><td>V8</td><td>S26</td><td>sheet</td></tr></tbody></table></div></details><details><summary>Solvent accessibility (burial)</summary><div class="section-body"><table class='kv'><tr><td class='k'>buried</td><td class='v'>9</td></tr><tr><td class='k'>exposed</td><td class='v'>15</td></tr></table></div></details><details><summary>Energy decomposition (blind)</summary><div class="section-body"><table class='kv'><tr><td class='k'>distogram_nll</td><td class='v'>1.4426</td></tr><tr><td class='k'>lj_near</td><td class='v'>4</td></tr><tr><td class='k'>lj_severe</td><td class='v'>0</td></tr><tr><td class='k'>ramachandran_forbidden_fraction</td><td class='v'>0.0</td></tr></table></div></details><details><summary>Disulfide bonds <span class="badge">3</span></summary><div class="section-body"><table class='data'><thead><tr><th>res_i</th><th>res_j</th></tr></thead><tbody><tr><td>C2</td><td>C20</td></tr><tr><td>C6</td><td>C22</td></tr><tr><td>C12</td><td>C30</td></tr></tbody></table></div></details><details><summary>Side-chain rotamers (χ1/χ2) <span class="badge">29</span></summary><div class="section-body"><table class='data'><thead><tr><th>index</th><th>residue</th><th>chi1_deg</th><th>chi2_deg</th></tr></thead><tbody><tr><td>1</td><td>F</td><td>-67.800</td><td>100.000</td></tr><tr><td>2</td><td>C</td><td>-54.900</td><td>3.000</td></tr><tr><td>4</td><td>E</td><td>-70.600</td><td>-51.200</td></tr><tr><td>5</td><td>T</td><td>-57.900</td><td>6.200</td></tr><tr><td>6</td><td>C</td><td>-70.600</td><td>14.100</td></tr><tr><td>7</td><td>R</td><td>-52.000</td><td>-66.900</td></tr><tr><td>8</td><td>V</td><td>-67.000</td><td>-9.500</td></tr><tr><td>9</td><td>I</td><td>-64.300</td><td>-59.500</td></tr><tr><td>10</td><td>P</td><td>29.000</td><td>-6.300</td></tr><tr><td>11</td><td>V</td><td>-57.600</td><td>-10.800</td></tr><tr><td>12</td><td>C</td><td>-64.600</td><td>-4.000</td></tr><tr><td>13</td><td>T</td><td>-60.900</td><td>8.600</td></tr><tr><td>14</td><td>Y</td><td>-71.700</td><td>90.300</td></tr><tr><td>15</td><td>S</td><td>-57.900</td><td>-13.600</td></tr><tr><td>18</td><td>L</td><td>-49.300</td><td>-52.900</td></tr><tr><td>20</td><td>C</td><td>-55.900</td><td>-1.800</td></tr><tr><td>21</td><td>T</td><td>-67.800</td><td>-0.100</td></tr><tr><td>22</td><td>C</td><td>-70.300</td><td>12.300</td></tr><tr><td>23</td><td>D</td><td>-65.600</td><td>4.900</td></tr><tr><td>24</td><td>D</td><td>-64.300</td><td>0.600</td></tr><tr><td>25</td><td>R</td><td>-58.900</td><td>-67.500</td></tr><tr><td>26</td><td>S</td><td>-49.600</td><td>8.300</td></tr><tr><td>27</td><td>D</td><td>-49.900</td><td>11.800</td></tr><tr><td>29</td><td>L</td><td>-69.500</td><td>-67.000</td></tr><tr><td>30</td><td>C</td><td>-56.000</td><td>-5.200</td></tr><tr><td>31</td><td>K</td><td>-62.700</td><td>-65.500</td></tr><tr><td>32</td><td>R</td><td>-66.100</td><td>-63.400</td></tr><tr><td>33</td><td>N</td><td>-65.100</td><td>1.300</td></tr><tr><td>35</td><td>D</td><td>-69.800</td><td>14.600</td></tr></tbody></table></div></details><details open><summary>All metrics (scalars) <span class="badge">40</span></summary><div class="section-body"><table class='kv'><tr><td class='k'>allatom_rmsd_informative</td><td class='v'>True</td></tr><tr><td class='k'>bin_accuracy</td><td class='v'>0.4810606060606061</td></tr><tr><td class='k'>blind_fold</td><td class='v'>False</td></tr><tr><td class='k'>ca_drift_after_phase_b</td><td class='v'>0.0004706193520755389</td></tr><tr><td class='k'>ca_rmsd</td><td class='v'>4.111554670321464</td></tr><tr><td class='k'>contact_f1</td><td class='v'>0.5578947368421052</td></tr><tr><td class='k'>distogram_pairs</td><td class='v'>528</td></tr><tr><td class='k'>disulfides_expected</td><td class='v'>3</td></tr><tr><td class='k'>disulfides_locked</td><td class='v'>3</td></tr><tr><td class='k'>ga_delta_energy</td><td class='v'>0.0</td></tr><tr><td class='k'>ga_delta_rmsd</td><td class='v'>0.0</td></tr><tr><td class='k'>ga_fitness_mode</td><td class='v'>energy</td></tr><tr><td class='k'>heavy_atom_rmsd</td><td class='v'>5.251041364430349</td></tr><tr><td class='k'>heavy_atom_rmsd_before_sidechain_refine</td><td class='v'>5.306382329417384</td></tr><tr><td class='k'>heavy_atom_rmsd_effective</td><td class='v'>5.251041364430349</td></tr><tr><td class='k'>lj_near</td><td class='v'>4</td></tr><tr><td class='k'>lj_severe</td><td class='v'>0</td></tr><tr><td class='k'>localized_anchor_rmsd</td><td class='v'></td></tr><tr><td class='k'>matched_heavy_atoms</td><td class='v'>254</td></tr><tr><td class='k'>matched_sidechain_heavy_atoms</td><td class='v'>114</td></tr><tr><td class='k'>max_residue_error</td><td class='v'>8.161924053261592</td></tr><tr><td class='k'>mode</td><td class='v'>oracle</td></tr><tr><td class='k'>output_pdb</td><td class='v'>general_benchmark\model_refinement\esmfold\1R1F\seeds\seed_0\1R1F.pdb</td></tr><tr><td class='k'>phase_b_ca_rmsd_after</td><td class='v'>4.111535332969444</td></tr><tr><td class='k'>phase_b_ca_rmsd_before</td><td class='v'>4.111535332969444</td></tr><tr><td class='k'>phase_b_method</td><td class='v'>pdbfixer</td></tr><tr><td class='k'>pre_local_rmsd</td><td class='v'>4.111554670321464</td></tr><tr><td class='k'>ramachandran_forbidden_fraction</td><td class='v'>0.0</td></tr><tr><td class='k'>reference_pdb</td><td class='v'>set\general_benchmark\1R1F\sequence\1R1F.pdb</td></tr><tr><td class='k'>residues</td><td class='v'>35</td></tr><tr><td class='k'>rotamer_mean_chi1_well_err</td><td class='v'>5.855221525333588</td></tr><tr><td class='k'>rotamer_outlier_count</td><td class='v'>0</td></tr><tr><td class='k'>rotamer_outlier_fraction</td><td class='v'>0.0</td></tr><tr><td class='k'>rotamer_total_with_wells</td><td class='v'>29</td></tr><tr><td class='k'>sidechain_heavy_atom_rmsd</td><td class='v'>6.318618953409919</td></tr><tr><td class='k'>sidechain_heavy_atom_rmsd_before_sidechain_refine</td><td class='v'>6.444229828102021</td></tr><tr><td class='k'>sidechain_heavy_atom_rmsd_effective</td><td class='v'>6.318618953409919</td></tr><tr><td class='k'>ssbond_source</td><td class='v'>PDB SSBOND records</td></tr><tr><td class='k'>tm_score_ca_ordered</td><td class='v'>0.2272986140472735</td></tr><tr><td class='k'>verdict</td><td class='v'>PASS_WITH_WARNINGS</td></tr></table></div></details><details open><summary>Conflict summary</summary><div class="section-body"><p class='msg'>[STRUCTURAL_CONFLICT] Root cause(s): D23-L29 — explain ~73/76 conflicts. Revisit these inputs first.</p><table class='kv'><tr><td class='k'>hub_fraction</td><td class='v'>0.343</td></tr><tr><td class='k'>hub_span_fraction</td><td class='v'>0.714</td></tr><tr><td class='k'>intrinsic_contradiction_frac</td><td class='v'>0.0</td></tr><tr><td class='k'>max_incompatibility_ang</td><td class='v'>4.34</td></tr><tr><td class='k'>mean_conflicts_per_hub</td><td class='v'>6.3</td></tr><tr><td class='k'>n_hub_residues</td><td class='v'>12</td></tr></table><p class='k'>Root causes:</p><table class='kv'><tr><td class='k'>0</td><td class='v'>{&#x27;conflicts_explained&#x27;: 73, &#x27;focus&#x27;: &#x27;D23-L29&#x27;, &#x27;fraction&#x27;: 0.961, &#x27;type&#x27;: &#x27;segment&#x27;}</td></tr></table></div></details><details><summary>Worst distance pairs <span class="badge">8</span></summary><div class="section-body"><table class='data'><thead><tr><th>pair</th><th>current</th><th>target</th><th>error</th></tr></thead><tbody><tr><td>C6-D24</td><td>10.317</td><td>16.296</td><td>5.979</td></tr><tr><td>C6-C22</td><td>7.323</td><td>13.183</td><td>5.861</td></tr><tr><td>R7-D24</td><td>11.292</td><td>17.097</td><td>5.804</td></tr><tr><td>R7-D27</td><td>6.341</td><td>12.099</td><td>5.758</td></tr><tr><td>R7-S26</td><td>9.043</td><td>14.684</td><td>5.641</td></tr><tr><td>C6-S26</td><td>8.859</td><td>14.421</td><td>5.562</td></tr><tr><td>V8-D24</td><td>11.520</td><td>17.008</td><td>5.488</td></tr><tr><td>T5-D27</td><td>10.755</td><td>16.241</td><td>5.486</td></tr></tbody></table></div></details><details><summary>Worst residues <span class="badge">10</span></summary><div class="section-body"><table class='data'><thead><tr><th>residue</th><th>error</th></tr></thead><tbody><tr><td>Y14</td><td>8.162</td></tr><tr><td>R25</td><td>7.202</td></tr><tr><td>S26</td><td>6.897</td></tr><tr><td>E4</td><td>6.139</td></tr><tr><td>G28</td><td>5.226</td></tr><tr><td>V8</td><td>5.187</td></tr><tr><td>T5</td><td>5.152</td></tr><tr><td>F1</td><td>4.971</td></tr><tr><td>V11</td><td>4.804</td></tr><tr><td>I9</td><td>4.556</td></tr></tbody></table></div></details><details><summary>Best-of (seeds) <span class="badge">2</span></summary><div class="section-body"><table class='kv'><tr><td class='k'>base_seed</td><td class='v'>0</td></tr><tr><td class='k'>candidate_ca_rmsds</td><td class='v'>[4.111554670321464, 4.120160532199228]</td></tr><tr><td class='k'>n_runs</td><td class='v'>2</td></tr><tr><td class='k'>n_workers</td><td class='v'>2</td></tr><tr><td class='k'>native_winner_seed</td><td class='v'>0</td></tr><tr><td class='k'>blind_winner_seed</td><td class='v'>1</td></tr><tr><td class='k'>blind_winner_ca_rmsd</td><td class='v'>4.1201</td></tr><tr><td class='k'>blind_selected_by</td><td class='v'>composite_fold_energy</td></tr></table></div></details><details><summary>Failure classification</summary><div class="section-body"><table class='kv'><tr><td class='k'>primary_reason</td><td class='v'>GA_NO_BACKBONE_IMPROVEMENT</td></tr><tr><td class='k'>reasons</td><td class='v'>[&#x27;GA_NO_BACKBONE_IMPROVEMENT&#x27;, &#x27;BACKBONE_TARGET_MISSED&#x27;, &#x27;LOCAL_HOTSPOT_REMAINS&#x27;, &#x27;HEAVY_ATOM_RMSD_HIGH&#x27;, &#x27;SIDECHAIN_RMSD_HIGH&#x27;]</td></tr><tr><td class='k'>status</td><td class='v'>DIAGNOSED</td></tr></table></div></details><details><summary>Raw JSON</summary><div class="section-body"><pre class='raw'>{
+  &quot;allatom_rmsd_informative&quot;: true,
+  &quot;best_of&quot;: {
+    &quot;base_seed&quot;: 0,
+    &quot;candidate_ca_rmsds&quot;: [
+      4.111554670321464,
+      4.120160532199228
+    ],
+    &quot;n_runs&quot;: 2,
+    &quot;n_workers&quot;: 2,
+    &quot;winner_seed&quot;: 0
+  },
+  &quot;bin_accuracy&quot;: 0.4810606060606061,
+  &quot;blind_fold&quot;: false,
+  &quot;ca_drift_after_phase_b&quot;: 0.0004706193520755389,
+  &quot;ca_rmsd&quot;: 4.111554670321464,
+  &quot;conflict_summary&quot;: {
+    &quot;conflicts_explained_by_roots&quot;: 73,
+    &quot;message&quot;: &quot;[STRUCTURAL_CONFLICT] Root cause(s): D23-L29 — explain ~73/76 conflicts. Revisit these inputs first.&quot;,
+    &quot;metrics&quot;: {
+      &quot;hub_fraction&quot;: 0.343,
+      &quot;hub_span_fraction&quot;: 0.714,
+      &quot;intrinsic_contradiction_frac&quot;: 0.0,
+      &quot;max_incompatibility_ang&quot;: 4.34,
+      &quot;mean_conflicts_per_hub&quot;: 6.3,
+      &quot;n_hub_residues&quot;: 12
+    },
+    &quot;pervasiveness&quot;: &quot;focal&quot;,
+    &quot;root_causes&quot;: [
+      {
+        &quot;conflicts_explained&quot;: 73,
+        &quot;focus&quot;: &quot;D23-L29&quot;,
+        &quot;fraction&quot;: 0.961,
+        &quot;type&quot;: &quot;segment&quot;
+      }
+    ],
+    &quot;signature&quot;: &quot;STRUCTURAL_CONFLICT&quot;,
+    &quot;signature_basis&quot;: &quot;the fold cannot satisfy the restraints here (focal footprint); root_causes localize WHERE. Caveat: this is DESCRIPTIVE — it can reflect a genuine input defect OR a hard fold the engine did not fully converge (seen on clean L0 of large β-sheets), and register-shift/truncation/wrong-region are not blindly separable. Only INPUT_SELF_CONTRADICTORY is a pure input verdict; cross-check template length_ratio/coverage offline&quot;,
+    &quot;signature_confidence&quot;: &quot;descriptive&quot;,
+    &quot;total_conflicts&quot;: 76
+  },
+  &quot;contact_f1&quot;: 0.5578947368421052,
+  &quot;distogram_pairs&quot;: 528,
+  &quot;disulfides_expected&quot;: 3,
+  &quot;disulfides_locked&quot;: 3,
+  &quot;failure_classification&quot;: {
+    &quot;primary_reason&quot;: &quot;GA_NO_BACKBONE_IMPROVEMENT&quot;,
+    &quot;reasons&quot;: [
+      &quot;GA_NO_BACKBONE_IMPROVEMENT&quot;,
+      &quot;BACKBONE_TARGET_MISSED&quot;,
+      &quot;LOCAL_HOTSPOT_REMAINS&quot;,
+      &quot;HEAVY_ATOM_RMSD_HIGH&quot;,
+      &quot;SIDECHAIN_RMSD_HIGH&quot;
+    ],
+    &quot;status&quot;: &quot;DIAGNOSED&quot;
+  },
+  &quot;full_report&quot;: {
+    &quot;contact_map&quot;: {
+      &quot;contacts&quot;: [
+        {
+          &quot;ca_distance&quot;: 3.25,
+          &quot;i&quot;: 1,
+          &quot;j&quot;: 3,
+          &quot;res_i&quot;: &quot;F&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.29,
+          &quot;i&quot;: 1,
+          &quot;j&quot;: 4,
+          &quot;res_i&quot;: &quot;F&quot;,
+          &quot;res_j&quot;: &quot;E&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 6.46,
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 4,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;E&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.37,
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 5,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;T&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.83,
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 6,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 6.88,
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 20,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 18
+        },
+        {
+          &quot;ca_distance&quot;: 5.68,
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 29,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 27
+        },
+        {
+          &quot;ca_distance&quot;: 6.56,
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 28
+        },
+        {
+          &quot;ca_distance&quot;: 7.55,
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 32,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 30
+        },
+        {
+          &quot;ca_distance&quot;: 7.3,
+          &quot;i&quot;: 3,
+          &quot;j&quot;: 5,
+          &quot;res_i&quot;: &quot;G&quot;,
+          &quot;res_j&quot;: &quot;T&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 6.87,
+          &quot;i&quot;: 4,
+          &quot;j&quot;: 6,
+          &quot;res_i&quot;: &quot;E&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.66,
+          &quot;i&quot;: 4,
+          &quot;j&quot;: 7,
+          &quot;res_i&quot;: &quot;E&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.28,
+          &quot;i&quot;: 5,
+          &quot;j&quot;: 7,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 5.94,
+          &quot;i&quot;: 5,
+          &quot;j&quot;: 8,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;V&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 7.17,
+          &quot;i&quot;: 5,
+          &quot;j&quot;: 9,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;I&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 5.43,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 8,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;V&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 6.24,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 9,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;I&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 7.66,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 10,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;P&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 7.22,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 12,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 6
+        },
+        {
+          &quot;ca_distance&quot;: 7.32,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 22,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 16
+        },
+        {
+          &quot;ca_distance&quot;: 7.26,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 27,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 21
+        },
+        {
+          &quot;ca_distance&quot;: 4.99,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 22
+        },
+        {
+          &quot;ca_distance&quot;: 5.19,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 29,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 23
+        },
+        {
+          &quot;ca_distance&quot;: 7.47,
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 24
+        },
+        {
+          &quot;ca_distance&quot;: 7.2,
+          &quot;i&quot;: 7,
+          &quot;j&quot;: 9,
+          &quot;res_i&quot;: &quot;R&quot;,
+          &quot;res_j&quot;: &quot;I&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.78,
+          &quot;i&quot;: 7,
+          &quot;j&quot;: 10,
+          &quot;res_i&quot;: &quot;R&quot;,
+          &quot;res_j&quot;: &quot;P&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 6.34,
+          &quot;i&quot;: 7,
+          &quot;j&quot;: 27,
+          &quot;res_i&quot;: &quot;R&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 20
+        },
+        {
+          &quot;ca_distance&quot;: 6.77,
+          &quot;i&quot;: 7,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;R&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 21
+        },
+        {
+          &quot;ca_distance&quot;: 5.57,
+          &quot;i&quot;: 8,
+          &quot;j&quot;: 10,
+          &quot;res_i&quot;: &quot;V&quot;,
+          &quot;res_j&quot;: &quot;P&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.45,
+          &quot;i&quot;: 8,
+          &quot;j&quot;: 27,
+          &quot;res_i&quot;: &quot;V&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 19
+        },
+        {
+          &quot;ca_distance&quot;: 7.33,
+          &quot;i&quot;: 8,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;V&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 20
+        },
+        {
+          &quot;ca_distance&quot;: 4.94,
+          &quot;i&quot;: 9,
+          &quot;j&quot;: 11,
+          &quot;res_i&quot;: &quot;I&quot;,
+          &quot;res_j&quot;: &quot;V&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.35,
+          &quot;i&quot;: 9,
+          &quot;j&quot;: 12,
+          &quot;res_i&quot;: &quot;I&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 6.06,
+          &quot;i&quot;: 10,
+          &quot;j&quot;: 12,
+          &quot;res_i&quot;: &quot;P&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.62,
+          &quot;i&quot;: 10,
+          &quot;j&quot;: 27,
+          &quot;res_i&quot;: &quot;P&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 17
+        },
+        {
+          &quot;ca_distance&quot;: 6.6,
+          &quot;i&quot;: 10,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;P&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 18
+        },
+        {
+          &quot;ca_distance&quot;: 4.71,
+          &quot;i&quot;: 11,
+          &quot;j&quot;: 13,
+          &quot;res_i&quot;: &quot;V&quot;,
+          &quot;res_j&quot;: &quot;T&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.76,
+          &quot;i&quot;: 11,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;V&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 17
+        },
+        {
+          &quot;ca_distance&quot;: 5.32,
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 14,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;Y&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.6,
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 15,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;S&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.66,
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 22,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 10
+        },
+        {
+          &quot;ca_distance&quot;: 7.42,
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 24,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 12
+        },
+        {
+          &quot;ca_distance&quot;: 5.42,
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 16
+        },
+        {
+          &quot;ca_distance&quot;: 7.02,
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 18
+        },
+        {
+          &quot;ca_distance&quot;: 6.18,
+          &quot;i&quot;: 13,
+          &quot;j&quot;: 15,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;S&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 5.11,
+          &quot;i&quot;: 14,
+          &quot;j&quot;: 16,
+          &quot;res_i&quot;: &quot;Y&quot;,
+          &quot;res_j&quot;: &quot;A&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.82,
+          &quot;i&quot;: 14,
+          &quot;j&quot;: 17,
+          &quot;res_i&quot;: &quot;Y&quot;,
+          &quot;res_j&quot;: &quot;A&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 7.63,
+          &quot;i&quot;: 14,
+          &quot;j&quot;: 20,
+          &quot;res_i&quot;: &quot;Y&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 6
+        },
+        {
+          &quot;ca_distance&quot;: 6.96,
+          &quot;i&quot;: 14,
+          &quot;j&quot;: 21,
+          &quot;res_i&quot;: &quot;Y&quot;,
+          &quot;res_j&quot;: &quot;T&quot;,
+          &quot;separation&quot;: 7
+        },
+        {
+          &quot;ca_distance&quot;: 7.83,
+          &quot;i&quot;: 14,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;Y&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 16
+        },
+        {
+          &quot;ca_distance&quot;: 4.27,
+          &quot;i&quot;: 15,
+          &quot;j&quot;: 17,
+          &quot;res_i&quot;: &quot;S&quot;,
+          &quot;res_j&quot;: &quot;A&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 5.14,
+          &quot;i&quot;: 15,
+          &quot;j&quot;: 18,
+          &quot;res_i&quot;: &quot;S&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 6.38,
+          &quot;i&quot;: 15,
+          &quot;j&quot;: 19,
+          &quot;res_i&quot;: &quot;S&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 6.13,
+          &quot;i&quot;: 15,
+          &quot;j&quot;: 20,
+          &quot;res_i&quot;: &quot;S&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 5
+        },
+        {
+          &quot;ca_distance&quot;: 7.86,
+          &quot;i&quot;: 15,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;S&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 15
+        },
+        {
+          &quot;ca_distance&quot;: 5.73,
+          &quot;i&quot;: 16,
+          &quot;j&quot;: 18,
+          &quot;res_i&quot;: &quot;A&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 4.64,
+          &quot;i&quot;: 16,
+          &quot;j&quot;: 19,
+          &quot;res_i&quot;: &quot;A&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 6.58,
+          &quot;i&quot;: 16,
+          &quot;j&quot;: 20,
+          &quot;res_i&quot;: &quot;A&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 6.74,
+          &quot;i&quot;: 16,
+          &quot;j&quot;: 21,
+          &quot;res_i&quot;: &quot;A&quot;,
+          &quot;res_j&quot;: &quot;T&quot;,
+          &quot;separation&quot;: 5
+        },
+        {
+          &quot;ca_distance&quot;: 5.29,
+          &quot;i&quot;: 17,
+          &quot;j&quot;: 19,
+          &quot;res_i&quot;: &quot;A&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.35,
+          &quot;i&quot;: 17,
+          &quot;j&quot;: 20,
+          &quot;res_i&quot;: &quot;A&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 4.21,
+          &quot;i&quot;: 18,
+          &quot;j&quot;: 20,
+          &quot;res_i&quot;: &quot;L&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.44,
+          &quot;i&quot;: 18,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;L&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 12
+        },
+        {
+          &quot;ca_distance&quot;: 5.67,
+          &quot;i&quot;: 18,
+          &quot;j&quot;: 32,
+          &quot;res_i&quot;: &quot;L&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 14
+        },
+        {
+          &quot;ca_distance&quot;: 7.95,
+          &quot;i&quot;: 18,
+          &quot;j&quot;: 33,
+          &quot;res_i&quot;: &quot;L&quot;,
+          &quot;res_j&quot;: &quot;N&quot;,
+          &quot;separation&quot;: 15
+        },
+        {
+          &quot;ca_distance&quot;: 6.27,
+          &quot;i&quot;: 19,
+          &quot;j&quot;: 21,
+          &quot;res_i&quot;: &quot;G&quot;,
+          &quot;res_j&quot;: &quot;T&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.09,
+          &quot;i&quot;: 19,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;G&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 11
+        },
+        {
+          &quot;ca_distance&quot;: 7.08,
+          &quot;i&quot;: 19,
+          &quot;j&quot;: 31,
+          &quot;res_i&quot;: &quot;G&quot;,
+          &quot;res_j&quot;: &quot;K&quot;,
+          &quot;separation&quot;: 12
+        },
+        {
+          &quot;ca_distance&quot;: 4.91,
+          &quot;i&quot;: 19,
+          &quot;j&quot;: 32,
+          &quot;res_i&quot;: &quot;G&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 13
+        },
+        {
+          &quot;ca_distance&quot;: 5.12,
+          &quot;i&quot;: 19,
+          &quot;j&quot;: 33,
+          &quot;res_i&quot;: &quot;G&quot;,
+          &quot;res_j&quot;: &quot;N&quot;,
+          &quot;separation&quot;: 14
+        },
+        {
+          &quot;ca_distance&quot;: 6.94,
+          &quot;i&quot;: 20,
+          &quot;j&quot;: 22,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 6.86,
+          &quot;i&quot;: 20,
+          &quot;j&quot;: 29,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 9
+        },
+        {
+          &quot;ca_distance&quot;: 3.34,
+          &quot;i&quot;: 20,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 10
+        },
+        {
+          &quot;ca_distance&quot;: 4.83,
+          &quot;i&quot;: 20,
+          &quot;j&quot;: 31,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;K&quot;,
+          &quot;separation&quot;: 11
+        },
+        {
+          &quot;ca_distance&quot;: 3.59,
+          &quot;i&quot;: 20,
+          &quot;j&quot;: 32,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 12
+        },
+        {
+          &quot;ca_distance&quot;: 6.38,
+          &quot;i&quot;: 20,
+          &quot;j&quot;: 33,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;N&quot;,
+          &quot;separation&quot;: 13
+        },
+        {
+          &quot;ca_distance&quot;: 4.83,
+          &quot;i&quot;: 21,
+          &quot;j&quot;: 23,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 5.15,
+          &quot;i&quot;: 21,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 9
+        },
+        {
+          &quot;ca_distance&quot;: 5.3,
+          &quot;i&quot;: 21,
+          &quot;j&quot;: 31,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;K&quot;,
+          &quot;separation&quot;: 10
+        },
+        {
+          &quot;ca_distance&quot;: 7.28,
+          &quot;i&quot;: 21,
+          &quot;j&quot;: 32,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 11
+        },
+        {
+          &quot;ca_distance&quot;: 6.67,
+          &quot;i&quot;: 21,
+          &quot;j&quot;: 33,
+          &quot;res_i&quot;: &quot;T&quot;,
+          &quot;res_j&quot;: &quot;N&quot;,
+          &quot;separation&quot;: 12
+        },
+        {
+          &quot;ca_distance&quot;: 4.76,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 24,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.36,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 25,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.04,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 26,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;S&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 6.28,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 27,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 5
+        },
+        {
+          &quot;ca_distance&quot;: 3.43,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 6
+        },
+        {
+          &quot;ca_distance&quot;: 4.34,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 29,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 7
+        },
+        {
+          &quot;ca_distance&quot;: 3.8,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 8
+        },
+        {
+          &quot;ca_distance&quot;: 6.2,
+          &quot;i&quot;: 22,
+          &quot;j&quot;: 31,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;K&quot;,
+          &quot;separation&quot;: 9
+        },
+        {
+          &quot;ca_distance&quot;: 4.22,
+          &quot;i&quot;: 23,
+          &quot;j&quot;: 25,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 6.62,
+          &quot;i&quot;: 23,
+          &quot;j&quot;: 26,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;S&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 7.93,
+          &quot;i&quot;: 23,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 5
+        },
+        {
+          &quot;ca_distance&quot;: 7.16,
+          &quot;i&quot;: 23,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 7
+        },
+        {
+          &quot;ca_distance&quot;: 7.12,
+          &quot;i&quot;: 23,
+          &quot;j&quot;: 31,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;K&quot;,
+          &quot;separation&quot;: 8
+        },
+        {
+          &quot;ca_distance&quot;: 4.32,
+          &quot;i&quot;: 24,
+          &quot;j&quot;: 26,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;S&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 5.63,
+          &quot;i&quot;: 24,
+          &quot;j&quot;: 27,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.34,
+          &quot;i&quot;: 24,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 4.6,
+          &quot;i&quot;: 26,
+          &quot;j&quot;: 28,
+          &quot;res_i&quot;: &quot;S&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 6.11,
+          &quot;i&quot;: 26,
+          &quot;j&quot;: 29,
+          &quot;res_i&quot;: &quot;S&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 6.59,
+          &quot;i&quot;: 27,
+          &quot;j&quot;: 29,
+          &quot;res_i&quot;: &quot;D&quot;,
+          &quot;res_j&quot;: &quot;L&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 6.05,
+          &quot;i&quot;: 28,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;G&quot;,
+          &quot;res_j&quot;: &quot;C&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 5.87,
+          &quot;i&quot;: 29,
+          &quot;j&quot;: 31,
+          &quot;res_i&quot;: &quot;L&quot;,
+          &quot;res_j&quot;: &quot;K&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.94,
+          &quot;i&quot;: 29,
+          &quot;j&quot;: 32,
+          &quot;res_i&quot;: &quot;L&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.46,
+          &quot;i&quot;: 30,
+          &quot;j&quot;: 32,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;R&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.9,
+          &quot;i&quot;: 30,
+          &quot;j&quot;: 33,
+          &quot;res_i&quot;: &quot;C&quot;,
+          &quot;res_j&quot;: &quot;N&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.15,
+          &quot;i&quot;: 31,
+          &quot;j&quot;: 33,
+          &quot;res_i&quot;: &quot;K&quot;,
+          &quot;res_j&quot;: &quot;N&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 7.65,
+          &quot;i&quot;: 31,
+          &quot;j&quot;: 34,
+          &quot;res_i&quot;: &quot;K&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.88,
+          &quot;i&quot;: 31,
+          &quot;j&quot;: 35,
+          &quot;res_i&quot;: &quot;K&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 4
+        },
+        {
+          &quot;ca_distance&quot;: 7.78,
+          &quot;i&quot;: 32,
+          &quot;j&quot;: 34,
+          &quot;res_i&quot;: &quot;R&quot;,
+          &quot;res_j&quot;: &quot;G&quot;,
+          &quot;separation&quot;: 2
+        },
+        {
+          &quot;ca_distance&quot;: 6.32,
+          &quot;i&quot;: 32,
+          &quot;j&quot;: 35,
+          &quot;res_i&quot;: &quot;R&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 3
+        },
+        {
+          &quot;ca_distance&quot;: 5.22,
+          &quot;i&quot;: 33,
+          &quot;j&quot;: 35,
+          &quot;res_i&quot;: &quot;N&quot;,
+          &quot;res_j&quot;: &quot;D&quot;,
+          &quot;separation&quot;: 2
+        }
+      ],
+      &quot;count&quot;: 111,
+      &quot;long_range&quot;: 47,
+      &quot;threshold_angstrom&quot;: 8.0
+    },
+    &quot;disulfides_formed&quot;: {
+      &quot;bonds&quot;: [
+        {
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 20,
+          &quot;res_i&quot;: &quot;C2&quot;,
+          &quot;res_j&quot;: &quot;C20&quot;
+        },
+        {
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 22,
+          &quot;res_i&quot;: &quot;C6&quot;,
+          &quot;res_j&quot;: &quot;C22&quot;
+        },
+        {
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 30,
+          &quot;res_i&quot;: &quot;C12&quot;,
+          &quot;res_j&quot;: &quot;C30&quot;
+        }
+      ],
+      &quot;count&quot;: 3
+    },
+    &quot;energy_decomposition&quot;: {
+      &quot;distogram_nll&quot;: 1.4426,
+      &quot;lj_near&quot;: 4,
+      &quot;lj_severe&quot;: 0,
+      &quot;ramachandran_forbidden_fraction&quot;: 0.0
+    },
+    &quot;ensemble&quot;: {
+      &quot;ensemble_pdb&quot;: &quot;general_benchmark\\model_refinement\\esmfold\\1R1F\\1R1F.ensemble.pdb&quot;,
+      &quot;n_models&quot;: 2
+    },
+    &quot;flexibility&quot;: {
+      &quot;most_flexible_residues&quot;: [
+        4,
+        22,
+        29,
+        26,
+        3
+      ],
+      &quot;n_models&quot;: 2,
+      &quot;rmsf_max&quot;: 0.06,
+      &quot;rmsf_mean&quot;: 0.031
+    },
+    &quot;hbond_network&quot;: {
+      &quot;bonds&quot;: [
+        {
+          &quot;i&quot;: 2,
+          &quot;j&quot;: 6,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;C2&quot;,
+          &quot;partner_b&quot;: &quot;C6&quot;
+        },
+        {
+          &quot;i&quot;: 6,
+          &quot;j&quot;: 10,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;C6&quot;,
+          &quot;partner_b&quot;: &quot;P10&quot;
+        },
+        {
+          &quot;i&quot;: 7,
+          &quot;j&quot;: 11,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;R7&quot;,
+          &quot;partner_b&quot;: &quot;V11&quot;
+        },
+        {
+          &quot;i&quot;: 9,
+          &quot;j&quot;: 13,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;I9&quot;,
+          &quot;partner_b&quot;: &quot;T13&quot;
+        },
+        {
+          &quot;i&quot;: 11,
+          &quot;j&quot;: 15,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;V11&quot;,
+          &quot;partner_b&quot;: &quot;S15&quot;
+        },
+        {
+          &quot;i&quot;: 12,
+          &quot;j&quot;: 16,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;C12&quot;,
+          &quot;partner_b&quot;: &quot;A16&quot;
+        },
+        {
+          &quot;i&quot;: 13,
+          &quot;j&quot;: 17,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;T13&quot;,
+          &quot;partner_b&quot;: &quot;A17&quot;
+        },
+        {
+          &quot;i&quot;: 15,
+          &quot;j&quot;: 19,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;S15&quot;,
+          &quot;partner_b&quot;: &quot;G19&quot;
+        },
+        {
+          &quot;i&quot;: 16,
+          &quot;j&quot;: 20,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;A16&quot;,
+          &quot;partner_b&quot;: &quot;C20&quot;
+        },
+        {
+          &quot;i&quot;: 17,
+          &quot;j&quot;: 21,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;A17&quot;,
+          &quot;partner_b&quot;: &quot;T21&quot;
+        },
+        {
+          &quot;i&quot;: 18,
+          &quot;j&quot;: 22,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;L18&quot;,
+          &quot;partner_b&quot;: &quot;C22&quot;
+        },
+        {
+          &quot;i&quot;: 19,
+          &quot;j&quot;: 23,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;G19&quot;,
+          &quot;partner_b&quot;: &quot;D23&quot;
+        },
+        {
+          &quot;i&quot;: 20,
+          &quot;j&quot;: 24,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;C20&quot;,
+          &quot;partner_b&quot;: &quot;D24&quot;
+        },
+        {
+          &quot;i&quot;: 21,
+          &quot;j&quot;: 25,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;T21&quot;,
+          &quot;partner_b&quot;: &quot;R25&quot;
+        },
+        {
+          &quot;i&quot;: 23,
+          &quot;j&quot;: 27,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;D23&quot;,
+          &quot;partner_b&quot;: &quot;D27&quot;
+        },
+        {
+          &quot;i&quot;: 25,
+          &quot;j&quot;: 29,
+          &quot;kind&quot;: &quot;helix&quot;,
+          &quot;partner_a&quot;: &quot;R25&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;
+        },
+        {
+          &quot;i&quot;: 8,
+          &quot;j&quot;: 26,
+          &quot;kind&quot;: &quot;sheet&quot;,
+          &quot;partner_a&quot;: &quot;V8&quot;,
+          &quot;partner_b&quot;: &quot;S26&quot;
+        }
+      ],
+      &quot;count&quot;: 17,
+      &quot;helix&quot;: 16,
+      &quot;sheet&quot;: 1
+    },
+    &quot;n_residues&quot;: 35,
+    &quot;pae&quot;: {
+      &quot;max_pae&quot;: 0.101,
+      &quot;mean_pae&quot;: 0.02,
+      &quot;n_models&quot;: 2,
+      &quot;n_residues&quot;: 35,
+      &quot;pae_csv&quot;: &quot;1R1F.pae.csv&quot;
+    },
+    &quot;per_residue&quot;: [
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.73,
+        &quot;index&quot;: 1,
+        &quot;residue&quot;: &quot;F&quot;,
+        &quot;rmsf&quot;: 0.016,
+        &quot;ss&quot;: &quot;C&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.38,
+        &quot;index&quot;: 2,
+        &quot;residue&quot;: &quot;C&quot;,
+        &quot;rmsf&quot;: 0.017,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.733,
+        &quot;index&quot;: 3,
+        &quot;residue&quot;: &quot;G&quot;,
+        &quot;rmsf&quot;: 0.051,
+        &quot;ss&quot;: &quot;G&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.826,
+        &quot;index&quot;: 4,
+        &quot;residue&quot;: &quot;E&quot;,
+        &quot;rmsf&quot;: 0.06,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.74,
+        &quot;index&quot;: 5,
+        &quot;residue&quot;: &quot;T&quot;,
+        &quot;rmsf&quot;: 0.045,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.352,
+        &quot;index&quot;: 6,
+        &quot;residue&quot;: &quot;C&quot;,
+        &quot;rmsf&quot;: 0.026,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.705,
+        &quot;index&quot;: 7,
+        &quot;residue&quot;: &quot;R&quot;,
+        &quot;rmsf&quot;: 0.03,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.767,
+        &quot;index&quot;: 8,
+        &quot;residue&quot;: &quot;V&quot;,
+        &quot;rmsf&quot;: 0.004,
+        &quot;ss&quot;: &quot;E&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.738,
+        &quot;index&quot;: 9,
+        &quot;residue&quot;: &quot;I&quot;,
+        &quot;rmsf&quot;: 0.024,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.714,
+        &quot;index&quot;: 10,
+        &quot;residue&quot;: &quot;P&quot;,
+        &quot;rmsf&quot;: 0.028,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.64,
+        &quot;index&quot;: 11,
+        &quot;residue&quot;: &quot;V&quot;,
+        &quot;rmsf&quot;: 0.03,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.332,
+        &quot;index&quot;: 12,
+        &quot;residue&quot;: &quot;C&quot;,
+        &quot;rmsf&quot;: 0.007,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.589,
+        &quot;index&quot;: 13,
+        &quot;residue&quot;: &quot;T&quot;,
+        &quot;rmsf&quot;: 0.026,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.504,
+        &quot;index&quot;: 14,
+        &quot;residue&quot;: &quot;Y&quot;,
+        &quot;rmsf&quot;: 0.019,
+        &quot;ss&quot;: &quot;G&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.528,
+        &quot;index&quot;: 15,
+        &quot;residue&quot;: &quot;S&quot;,
+        &quot;rmsf&quot;: 0.02,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.662,
+        &quot;index&quot;: 16,
+        &quot;residue&quot;: &quot;A&quot;,
+        &quot;rmsf&quot;: 0.008,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.793,
+        &quot;index&quot;: 17,
+        &quot;residue&quot;: &quot;A&quot;,
+        &quot;rmsf&quot;: 0.035,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.564,
+        &quot;index&quot;: 18,
+        &quot;residue&quot;: &quot;L&quot;,
+        &quot;rmsf&quot;: 0.014,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.585,
+        &quot;index&quot;: 19,
+        &quot;residue&quot;: &quot;G&quot;,
+        &quot;rmsf&quot;: 0.034,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.237,
+        &quot;index&quot;: 20,
+        &quot;residue&quot;: &quot;C&quot;,
+        &quot;rmsf&quot;: 0.019,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.404,
+        &quot;index&quot;: 21,
+        &quot;residue&quot;: &quot;T&quot;,
+        &quot;rmsf&quot;: 0.014,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.132,
+        &quot;index&quot;: 22,
+        &quot;residue&quot;: &quot;C&quot;,
+        &quot;rmsf&quot;: 0.056,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.529,
+        &quot;index&quot;: 23,
+        &quot;residue&quot;: &quot;D&quot;,
+        &quot;rmsf&quot;: 0.038,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.547,
+        &quot;index&quot;: 24,
+        &quot;residue&quot;: &quot;D&quot;,
+        &quot;rmsf&quot;: 0.051,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.784,
+        &quot;index&quot;: 25,
+        &quot;residue&quot;: &quot;R&quot;,
+        &quot;rmsf&quot;: 0.032,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.519,
+        &quot;index&quot;: 26,
+        &quot;residue&quot;: &quot;S&quot;,
+        &quot;rmsf&quot;: 0.052,
+        &quot;ss&quot;: &quot;E&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.566,
+        &quot;index&quot;: 27,
+        &quot;residue&quot;: &quot;D&quot;,
+        &quot;rmsf&quot;: 0.042,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.249,
+        &quot;index&quot;: 28,
+        &quot;residue&quot;: &quot;G&quot;,
+        &quot;rmsf&quot;: 0.03,
+        &quot;ss&quot;: &quot;G&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.143,
+        &quot;index&quot;: 29,
+        &quot;residue&quot;: &quot;L&quot;,
+        &quot;rmsf&quot;: 0.054,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.0,
+        &quot;index&quot;: 30,
+        &quot;residue&quot;: &quot;C&quot;,
+        &quot;rmsf&quot;: 0.01,
+        &quot;ss&quot;: &quot;G&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;buried&quot;,
+        &quot;exposure&quot;: 0.341,
+        &quot;index&quot;: 31,
+        &quot;residue&quot;: &quot;K&quot;,
+        &quot;rmsf&quot;: 0.034,
+        &quot;ss&quot;: &quot;G&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;intermediate&quot;,
+        &quot;exposure&quot;: 0.462,
+        &quot;index&quot;: 32,
+        &quot;residue&quot;: &quot;R&quot;,
+        &quot;rmsf&quot;: 0.05,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.704,
+        &quot;index&quot;: 33,
+        &quot;residue&quot;: &quot;N&quot;,
+        &quot;rmsf&quot;: 0.032,
+        &quot;ss&quot;: &quot;E&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 1.0,
+        &quot;index&quot;: 34,
+        &quot;residue&quot;: &quot;G&quot;,
+        &quot;rmsf&quot;: 0.033,
+        &quot;ss&quot;: &quot;H&quot;
+      },
+      {
+        &quot;burial_state&quot;: &quot;exposed&quot;,
+        &quot;exposure&quot;: 0.85,
+        &quot;index&quot;: 35,
+        &quot;residue&quot;: &quot;D&quot;,
+        &quot;rmsf&quot;: 0.028,
+        &quot;ss&quot;: &quot;E&quot;
+      }
+    ],
+    &quot;rotamers&quot;: {
+      &quot;count&quot;: 29,
+      &quot;rotamers&quot;: [
+        {
+          &quot;chi1_deg&quot;: -67.8,
+          &quot;chi2_deg&quot;: 100.0,
+          &quot;index&quot;: 1,
+          &quot;residue&quot;: &quot;F&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -54.9,
+          &quot;chi2_deg&quot;: 3.0,
+          &quot;index&quot;: 2,
+          &quot;residue&quot;: &quot;C&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -70.6,
+          &quot;chi2_deg&quot;: -51.2,
+          &quot;index&quot;: 4,
+          &quot;residue&quot;: &quot;E&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -57.9,
+          &quot;chi2_deg&quot;: 6.2,
+          &quot;index&quot;: 5,
+          &quot;residue&quot;: &quot;T&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -70.6,
+          &quot;chi2_deg&quot;: 14.1,
+          &quot;index&quot;: 6,
+          &quot;residue&quot;: &quot;C&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -52.0,
+          &quot;chi2_deg&quot;: -66.9,
+          &quot;index&quot;: 7,
+          &quot;residue&quot;: &quot;R&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -67.0,
+          &quot;chi2_deg&quot;: -9.5,
+          &quot;index&quot;: 8,
+          &quot;residue&quot;: &quot;V&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -64.3,
+          &quot;chi2_deg&quot;: -59.5,
+          &quot;index&quot;: 9,
+          &quot;residue&quot;: &quot;I&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: 29.0,
+          &quot;chi2_deg&quot;: -6.3,
+          &quot;index&quot;: 10,
+          &quot;residue&quot;: &quot;P&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -57.6,
+          &quot;chi2_deg&quot;: -10.8,
+          &quot;index&quot;: 11,
+          &quot;residue&quot;: &quot;V&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -64.6,
+          &quot;chi2_deg&quot;: -4.0,
+          &quot;index&quot;: 12,
+          &quot;residue&quot;: &quot;C&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -60.9,
+          &quot;chi2_deg&quot;: 8.6,
+          &quot;index&quot;: 13,
+          &quot;residue&quot;: &quot;T&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -71.7,
+          &quot;chi2_deg&quot;: 90.3,
+          &quot;index&quot;: 14,
+          &quot;residue&quot;: &quot;Y&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -57.9,
+          &quot;chi2_deg&quot;: -13.6,
+          &quot;index&quot;: 15,
+          &quot;residue&quot;: &quot;S&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -49.3,
+          &quot;chi2_deg&quot;: -52.9,
+          &quot;index&quot;: 18,
+          &quot;residue&quot;: &quot;L&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -55.9,
+          &quot;chi2_deg&quot;: -1.8,
+          &quot;index&quot;: 20,
+          &quot;residue&quot;: &quot;C&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -67.8,
+          &quot;chi2_deg&quot;: -0.1,
+          &quot;index&quot;: 21,
+          &quot;residue&quot;: &quot;T&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -70.3,
+          &quot;chi2_deg&quot;: 12.3,
+          &quot;index&quot;: 22,
+          &quot;residue&quot;: &quot;C&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -65.6,
+          &quot;chi2_deg&quot;: 4.9,
+          &quot;index&quot;: 23,
+          &quot;residue&quot;: &quot;D&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -64.3,
+          &quot;chi2_deg&quot;: 0.6,
+          &quot;index&quot;: 24,
+          &quot;residue&quot;: &quot;D&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -58.9,
+          &quot;chi2_deg&quot;: -67.5,
+          &quot;index&quot;: 25,
+          &quot;residue&quot;: &quot;R&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -49.6,
+          &quot;chi2_deg&quot;: 8.3,
+          &quot;index&quot;: 26,
+          &quot;residue&quot;: &quot;S&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -49.9,
+          &quot;chi2_deg&quot;: 11.8,
+          &quot;index&quot;: 27,
+          &quot;residue&quot;: &quot;D&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -69.5,
+          &quot;chi2_deg&quot;: -67.0,
+          &quot;index&quot;: 29,
+          &quot;residue&quot;: &quot;L&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -56.0,
+          &quot;chi2_deg&quot;: -5.2,
+          &quot;index&quot;: 30,
+          &quot;residue&quot;: &quot;C&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -62.7,
+          &quot;chi2_deg&quot;: -65.5,
+          &quot;index&quot;: 31,
+          &quot;residue&quot;: &quot;K&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -66.1,
+          &quot;chi2_deg&quot;: -63.4,
+          &quot;index&quot;: 32,
+          &quot;residue&quot;: &quot;R&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -65.1,
+          &quot;chi2_deg&quot;: 1.3,
+          &quot;index&quot;: 33,
+          &quot;residue&quot;: &quot;N&quot;
+        },
+        {
+          &quot;chi1_deg&quot;: -69.8,
+          &quot;chi2_deg&quot;: 14.6,
+          &quot;index&quot;: 35,
+          &quot;residue&quot;: &quot;D&quot;
+        }
+      ]
+    },
+    &quot;secondary_structure&quot;: &quot;CHGHHHHEHHHHHGHHHHHHHHHHHEHGHGGHEHE&quot;,
+    &quot;secondary_structure_counts&quot;: {
+      &quot;coil&quot;: 1,
+      &quot;helix&quot;: 25,
+      &quot;strand&quot;: 4,
+      &quot;three_ten&quot;: 5
+    },
+    &quot;solvent_accessibility&quot;: {
+      &quot;buried&quot;: 9,
+      &quot;exposed&quot;: 15
+    },
+    &quot;trajectory_frames&quot;: 22
+  },
+  &quot;ga_delta_energy&quot;: 0.0,
+  &quot;ga_delta_rmsd&quot;: 0.0,
+  &quot;ga_fitness_mode&quot;: &quot;energy&quot;,
+  &quot;global_topology_guard&quot;: {
+    &quot;after_domain_topology_match&quot;: 1.0,
+    &quot;after_lj_severe&quot;: 0,
+    &quot;after_local_chirality_match&quot;: 0.625,
+    &quot;after_rama_forbidden&quot;: 0.2857142857142857,
+    &quot;after_rmsd&quot;: 4.921568190697136,
+    &quot;after_sign&quot;: -1,
+    &quot;after_volume&quot;: -845.421927738407,
+    &quot;after_window_topology_match&quot;: 0.5,
+    &quot;applied&quot;: false,
+    &quot;axis&quot;: null,
+    &quot;before_domain_topology_match&quot;: 1.0,
+    &quot;before_lj_severe&quot;: 0,
+    &quot;before_local_chirality_match&quot;: 0.625,
+    &quot;before_rama_forbidden&quot;: 0.2857142857142857,
+    &quot;before_rmsd&quot;: 4.921568190697136,
+    &quot;before_sign&quot;: -1,
+    &quot;before_volume&quot;: -845.421927738407,
+    &quot;before_window_topology_match&quot;: 0.5,
+    &quot;best_candidate_rmsd&quot;: 5.181300288337704,
+    &quot;candidate_kind&quot;: &quot;residue_block&quot;,
+    &quot;candidate_label&quot;: &quot;first_half&quot;,
+    &quot;enabled&quot;: true,
+    &quot;max_candidates&quot;: 96,
+    &quot;min_improvement_a&quot;: 0.25,
+    &quot;reason&quot;: &quot;insufficient_rmsd_improvement&quot;,
+    &quot;ref_sign&quot;: -1,
+    &quot;ref_volume&quot;: -827.4285071930235,
+    &quot;tested_candidates&quot;: 30
+  },
+  &quot;heavy_atom_rmsd&quot;: 5.251041364430349,
+  &quot;heavy_atom_rmsd_before_sidechain_refine&quot;: 5.306382329417384,
+  &quot;heavy_atom_rmsd_effective&quot;: 5.251041364430349,
+  &quot;keep_set&quot;: [
+    [
+      7,
+      33,
+      22.998
+    ],
+    [
+      8,
+      33,
+      23.177
+    ],
+    [
+      9,
+      33,
+      22.376
+    ],
+    [
+      19,
+      31,
+      3.59
+    ],
+    [
+      21,
+      29,
+      3.8
+    ],
+    [
+      7,
+      32,
+      20.032
+    ],
+    [
+      7,
+      34,
+      20.397
+    ],
+    [
+      15,
+      18,
+      4.635
+    ],
+    [
+      3,
+      33,
+      20.618
+    ],
+    [
+      4,
+      33,
+      21.713
+    ],
+    [
+      6,
+      33,
+      21.428
+    ],
+    [
+      10,
+      33,
+      21.399
+    ],
+    [
+      8,
+      34,
+      21.21
+    ],
+    [
+      14,
+      17,
+      5.145
+    ],
+    [
+      9,
+      34,
+      20.775
+    ],
+    [
+      22,
+      25,
+      6.621
+    ],
+    [
+      18,
+      31,
+      4.91
+    ],
+    [
+      25,
+      28,
+      6.114
+    ],
+    [
+      3,
+      6,
+      7.657
+    ],
+    [
+      1,
+      5,
+      5.833
+    ],
+    [
+      10,
+      34,
+      20.334
+    ],
+    [
+      19,
+      30,
+      4.829
+    ],
+    [
+      20,
+      29,
+      5.151
+    ],
+    [
+      16,
+      24,
+      18.655
+    ],
+    [
+      8,
+      32,
+      19.716
+    ],
+    [
+      15,
+      19,
+      6.585
+    ],
+    [
+      31,
+      34,
+      6.319
+    ],
+    [
+      20,
+      30,
+      5.299
+    ],
+    [
+      16,
+      26,
+      18.722
+    ],
+    [
+      6,
+      32,
+      18.758
+    ],
+    [
+      9,
+      32,
+      19.298
+    ],
+    [
+      4,
+      32,
+      18.588
+    ],
+    [
+      4,
+      34,
+      18.636
+    ],
+    [
+      3,
+      15,
+      18.866
+    ],
+    [
+      30,
+      34,
+      5.881
+    ],
+    [
+      12,
+      33,
+      18.979
+    ],
+    [
+      20,
+      31,
+      7.278
+    ],
+    [
+      2,
+      5,
+      8.055
+    ],
+    [
+      18,
+      32,
+      5.121
+    ],
+    [
+      12,
+      34,
+      18.766
+    ],
+    [
+      1,
+      4,
+      7.371
+    ],
+    [
+      21,
+      30,
+      6.2
+    ],
+    [
+      6,
+      34,
+      18.423
+    ],
+    [
+      5,
+      8,
+      6.242
+    ],
+    [
+      5,
+      33,
+      18.182
+    ],
+    [
+      3,
+      16,
+      18.25
+    ],
+    [
+      16,
+      25,
+      17.941
+    ],
+    [
+      14,
+      19,
+      6.13
+    ],
+    [
+      7,
+      16,
+      19.272
+    ],
+    [
+      3,
+      20,
+      17.238
+    ],
+    [
+      2,
+      33,
+      17.342
+    ],
+    [
+      11,
+      21,
+      5.657
+    ],
+    [
+      11,
+      27,
+      5.424
+    ],
+    [
+      19,
+      32,
+      6.382
+    ],
+    [
+      17,
+      24,
+      17.074
+    ],
+    [
+      4,
+      7,
+      5.939
+    ],
+    [
+      20,
+      32,
+      6.673
+    ],
+    [
+      6,
+      16,
+      19.424
+    ],
+    [
+      7,
+      18,
+      18.558
+    ],
+    [
+      7,
+      15,
+      18.373
+    ],
+    [
+      13,
+      19,
+      7.635
+    ],
+    [
+      6,
+      15,
+      18.545
+    ],
+    [
+      15,
+      20,
+      6.738
+    ],
+    [
+      10,
+      32,
+      17.928
+    ],
+    [
+      14,
+      18,
+      6.381
+    ],
+    [
+      7,
+      31,
+      16.828
+    ],
+    [
+      13,
+      20,
+      6.964
+    ],
+    [
+      11,
+      33,
+      17.458
+    ],
+    [
+      9,
+      27,
+      6.603
+    ],
+    [
+      3,
+      13,
+      17.31
+    ],
+    [
+      26,
+      33,
+      18.238
+    ],
+    [
+      22,
+      29,
+      7.159
+    ],
+    [
+      3,
+      18,
+      17.051
+    ],
+    [
+      17,
+      26,
+      16.384
+    ],
+    [
+      23,
+      26,
+      5.63
+    ],
+    [
+      13,
+      21,
+      8.073
+    ],
+    [
+      9,
+      16,
+      17.557
+    ],
+    [
+      16,
+      23,
+      16.682
+    ],
+    [
+      22,
+      30,
+      7.115
+    ],
+    [
+      15,
+      26,
+      16.605
+    ],
+    [
+      6,
+      18,
+      17.983
+    ],
+    [
+      7,
+      20,
+      16.129
+    ],
+    [
+      0,
+      9,
+      17.435
+    ],
+    [
+      4,
+      20,
+      16.539
+    ],
+    [
+      2,
+      15,
+      17.081
+    ],
+    [
+      9,
+      18,
+      17.263
+    ],
+    [
+      11,
+      34,
+      16.573
+    ],
+    [
+      16,
+      19,
+      7.352
+    ],
+    [
+      22,
+      28,
+      8.567
+    ],
+    [
+      0,
+      12,
+      17.303
+    ],
+    [
+      2,
+      20,
+      15.455
+    ],
+    [
+      30,
+      33,
+      7.651
+    ],
+    [
+      0,
+      10,
+      17.232
+    ],
+    [
+      14,
+      24,
+      15.845
+    ],
+    [
+      8,
+      31,
+      16.514
+    ],
+    [
+      4,
+      15,
+      17.868
+    ],
+    [
+      5,
+      34,
+      15.572
+    ],
+    [
+      9,
+      31,
+      16.88
+    ],
+    [
+      25,
+      29,
+      8.129
+    ],
+    [
+      18,
+      26,
+      16.233
+    ],
+    [
+      8,
+      11,
+      7.348
+    ],
+    [
+      22,
+      27,
+      7.935
+    ],
+    [
+      3,
+      14,
+      16.079
+    ],
+    [
+      21,
+      24,
+      7.363
+    ],
+    [
+      18,
+      24,
+      15.179
+    ],
+    [
+      8,
+      18,
+      17.106
+    ],
+    [
+      3,
+      12,
+      16.441
+    ],
+    [
+      11,
+      29,
+      7.018
+    ],
+    [
+      0,
+      3,
+      7.288
+    ],
+    [
+      17,
+      25,
+      15.546
+    ],
+    [
+      13,
+      16,
+      7.816
+    ],
+    [
+      8,
+      16,
+      16.613
+    ],
+    [
+      2,
+      13,
+      16.584
+    ],
+    [
+      6,
+      20,
+      15.572
+    ],
+    [
+      7,
+      17,
+      17.225
+    ],
+    [
+      13,
+      34,
+      16.018
+    ],
+    [
+      24,
+      27,
+      8.873
+    ],
+    [
+      23,
+      33,
+      16.178
+    ],
+    [
+      0,
+      13,
+      16.522
+    ],
+    [
+      24,
+      33,
+      14.884
+    ],
+    [
+      11,
+      14,
+      7.601
+    ],
+    [
+      10,
+      13,
+      8.063
+    ],
+    [
+      27,
+      33,
+      16.336
+    ],
+    [
+      17,
+      23,
+      15.205
+    ],
+    [
+      10,
+      27,
+      7.756
+    ],
+    [
+      7,
+      30,
+      15.348
+    ],
+    [
+      1,
+      6,
+      9.715
+    ],
+    [
+      16,
+      27,
+      14.943
+    ],
+    [
+      14,
+      34,
+      15.213
+    ],
+    [
+      14,
+      26,
+      15.187
+    ],
+    [
+      18,
+      30,
+      7.078
+    ],
+    [
+      2,
+      12,
+      16.622
+    ],
+    [
+      4,
+      16,
+      17.607
+    ],
+    [
+      0,
+      11,
+      14.954
+    ],
+    [
+      8,
+      24,
+      16.534
+    ],
+    [
+      13,
+      17,
+      8.54
+    ],
+    [
+      2,
+      16,
+      16.259
+    ],
+    [
+      26,
+      32,
+      16.146
+    ],
+    [
+      3,
+      7,
+      9.434
+    ],
+    [
+      14,
+      20,
+      8.274
+    ],
+    [
+      13,
+      33,
+      15.621
+    ],
+    [
+      6,
+      31,
+      15.508
+    ],
+    [
+      4,
+      18,
+      17.047
+    ],
+    [
+      9,
+      17,
+      16.485
+    ],
+    [
+      15,
+      25,
+      15.47
+    ],
+    [
+      22,
+      26,
+      9.219
+    ],
+    [
+      4,
+      31,
+      14.642
+    ],
+    [
+      16,
+      34,
+      14.975
+    ],
+    [
+      4,
+      8,
+      7.169
+    ],
+    [
+      18,
+      29,
+      7.088
+    ],
+    [
+      21,
+      31,
+      9.039
+    ],
+    [
+      9,
+      15,
+      15.855
+    ],
+    [
+      25,
+      30,
+      9.075
+    ],
+    [
+      0,
+      15,
+      16.14
+    ],
+    [
+      7,
+      10,
+      8.249
+    ],
+    [
+      8,
+      15,
+      16.037
+    ],
+    [
+      9,
+      12,
+      8.468
+    ],
+    [
+      14,
+      25,
+      14.783
+    ],
+    [
+      11,
+      23,
+      7.42
+    ],
+    [
+      7,
+      19,
+      14.618
+    ],
+    [
+      6,
+      17,
+      16.83
+    ],
+    [
+      3,
+      17,
+      14.974
+    ],
+    [
+      12,
+      32,
+      15.349
+    ],
+    [
+      19,
+      28,
+      6.862
+    ],
+    [
+      0,
+      20,
+      14.353
+    ],
+    [
+      14,
+      33,
+      15.014
+    ],
+    [
+      0,
+      4,
+      10.234
+    ],
+    [
+      13,
+      18,
+      8.383
+    ],
+    [
+      10,
+      31,
+      15.553
+    ],
+    [
+      11,
+      28,
+      8.095
+    ],
+    [
+      23,
+      34,
+      15.235
+    ],
+    [
+      4,
+      30,
+      14.436
+    ],
+    [
+      20,
+      28,
+      8.549
+    ],
+    [
+      6,
+      9,
+      7.777
+    ],
+    [
+      23,
+      28,
+      8.304
+    ],
+    [
+      12,
+      15,
+      8.651
+    ],
+    [
+      16,
+      22,
+      14.604
+    ],
+    [
+      8,
+      22,
+      15.56
+    ],
+    [
+      11,
+      20,
+      8.672
+    ],
+    [
+      26,
+      29,
+      9.267
+    ],
+    [
+      26,
+      34,
+      15.911
+    ],
+    [
+      17,
+      20,
+      8.678
+    ],
+    [
+      24,
+      28,
+      10.463
+    ],
+    [
+      20,
+      23,
+      8.465
+    ],
+    [
+      13,
+      29,
+      7.83
+    ],
+    [
+      0,
+      33,
+      14.698
+    ],
+    [
+      29,
+      32,
+      7.9
+    ],
+    [
+      8,
+      30,
+      15.738
+    ],
+    [
+      16,
+      28,
+      13.8
+    ],
+    [
+      6,
+      14,
+      15.956
+    ],
+    [
+      2,
+      11,
+      14.175
+    ],
+    [
+      1,
+      33,
+      14.945
+    ],
+    [
+      0,
+      5,
+      9.88
+    ],
+    [
+      5,
+      9,
+      7.659
+    ],
+    [
+      6,
+      13,
+      15.274
+    ],
+    [
+      12,
+      21,
+      9.067
+    ],
+    [
+      8,
+      27,
+      8.369
+    ],
+    [
+      27,
+      30,
+      8.872
+    ],
+    [
+      11,
+      19,
+      8.676
+    ],
+    [
+      28,
+      31,
+      7.936
+    ],
+    [
+      18,
+      25,
+      14.749
+    ],
+    [
+      8,
+      12,
+      8.936
+    ],
+    [
+      2,
+      10,
+      15.792
+    ],
+    [
+      8,
+      20,
+      15.46
+    ],
+    [
+      4,
+      13,
+      15.35
+    ],
+    [
+      19,
+      22,
+      9.38
+    ],
+    [
+      7,
+      14,
+      15.487
+    ],
+    [
+      24,
+      34,
+      14.361
+    ],
+    [
+      2,
+      14,
+      14.846
+    ],
+    [
+      8,
+      17,
+      15.371
+    ],
+    [
+      0,
+      8,
+      15.606
+    ],
+    [
+      2,
+      18,
+      14.455
+    ],
+    [
+      23,
+      29,
+      8.504
+    ],
+    [
+      2,
+      9,
+      15.701
+    ],
+    [
+      25,
+      33,
+      15.634
+    ],
+    [
+      5,
+      16,
+      14.767
+    ],
+    [
+      18,
+      23,
+      14.108
+    ],
+    [
+      9,
+      26,
+      7.619
+    ],
+    [
+      5,
+      15,
+      14.191
+    ],
+    [
+      10,
+      18,
+      14.955
+    ],
+    [
+      15,
+      34,
+      13.977
+    ],
+    [
+      9,
+      30,
+      15.065
+    ],
+    [
+      24,
+      32,
+      13.954
+    ],
+    [
+      6,
+      19,
+      13.871
+    ],
+    [
+      11,
+      22,
+      9.277
+    ],
+    [
+      12,
+      24,
+      14.239
+    ],
+    [
+      0,
+      16,
+      15.304
+    ],
+    [
+      5,
+      10,
+      8.225
+    ],
+    [
+      11,
+      32,
+      14.068
+    ],
+    [
+      18,
+      33,
+      8.992
+    ],
+    [
+      15,
+      21,
+      10.529
+    ],
+    [
+      7,
+      13,
+      14.532
+    ],
+    [
+      15,
+      31,
+      9.029
+    ],
+    [
+      3,
+      10,
+      14.535
+    ],
+    [
+      16,
+      33,
+      14.121
+    ],
+    [
+      0,
+      14,
+      14.559
+    ],
+    [
+      14,
+      21,
+      9.787
+    ],
+    [
+      6,
+      30,
+      13.87
+    ],
+    [
+      18,
+      21,
+      10.163
+    ],
+    [
+      4,
+      19,
+      13.099
+    ],
+    [
+      27,
+      34,
+      14.358
+    ],
+    [
+      14,
+      29,
+      7.862
+    ],
+    [
+      12,
+      19,
+      9.986
+    ],
+    [
+      21,
+      32,
+      10.61
+    ],
+    [
+      10,
+      16,
+      14.284
+    ],
+    [
+      29,
+      34,
+      9.662
+    ],
+    [
+      27,
+      32,
+      13.615
+    ],
+    [
+      17,
+      32,
+      7.954
+    ],
+    [
+      17,
+      22,
+      13.091
+    ],
+    [
+      19,
+      33,
+      10.269
+    ],
+    [
+      11,
+      26,
+      8.805
+    ],
+    [
+      20,
+      27,
+      9.155
+    ],
+    [
+      17,
+      27,
+      12.757
+    ],
+    [
+      15,
+      23,
+      13.6
+    ],
+    [
+      16,
+      20,
+      9.982
+    ],
+    [
+      9,
+      20,
+      13.956
+    ],
+    [
+      13,
+      24,
+      12.977
+    ],
+    [
+      8,
+      25,
+      12.553
+    ],
+    [
+      10,
+      30,
+      14.497
+    ],
+    [
+      15,
+      32,
+      9.13
+    ],
+    [
+      15,
+      27,
+      13.013
+    ],
+    [
+      12,
+      20,
+      10.127
+    ],
+    [
+      23,
+      32,
+      14.194
+    ],
+    [
+      14,
+      23,
+      13.234
+    ],
+    [
+      1,
+      15,
+      12.791
+    ],
+    [
+      24,
+      31,
+      14.347
+    ],
+    [
+      26,
+      31,
+      14.16
+    ],
+    [
+      5,
+      18,
+      13.598
+    ],
+    [
+      8,
+      19,
+      13.647
+    ],
+    [
+      4,
+      14,
+      14.7
+    ],
+    [
+      10,
+      14,
+      10.039
+    ],
+    [
+      13,
+      26,
+      13.278
+    ],
+    [
+      20,
+      25,
+      9.865
+    ],
+    [
+      12,
+      25,
+      13.138
+    ],
+    [
+      22,
+      31,
+      10.67
+    ],
+    [
+      9,
+      19,
+      13.949
+    ],
+    [
+      15,
+      29,
+      8.63
+    ],
+    [
+      19,
+      34,
+      9.39
+    ],
+    [
+      20,
+      33,
+      9.414
+    ],
+    [
+      10,
+      24,
+      14.165
+    ],
+    [
+      10,
+      21,
+      9.219
+    ],
+    [
+      1,
+      12,
+      12.549
+    ],
+    [
+      0,
+      7,
+      14.622
+    ],
+    [
+      12,
+      31,
+      13.57
+    ],
+    [
+      18,
+      27,
+      12.861
+    ],
+    [
+      1,
+      17,
+      8.72
+    ],
+    [
+      9,
+      28,
+      10.559
+    ],
+    [
+      12,
+      29,
+      9.543
+    ],
+    [
+      11,
+      15,
+      9.809
+    ],
+    [
+      4,
+      12,
+      13.726
+    ],
+    [
+      12,
+      27,
+      9.346
+    ],
+    [
+      24,
+      29,
+      10.453
+    ],
+    [
+      1,
+      13,
+      12.226
+    ],
+    [
+      19,
+      27,
+      9.151
+    ],
+    [
+      17,
+      30,
+      8.634
+    ],
+    [
+      4,
+      17,
+      14.942
+    ],
+    [
+      6,
+      12,
+      13.688
+    ],
+    [
+      3,
+      9,
+      13.86
+    ],
+    [
+      10,
+      17,
+      13.901
+    ],
+    [
+      1,
+      9,
+      13.093
+    ],
+    [
+      1,
+      34,
+      12.061
+    ],
+    [
+      12,
+      26,
+      12.7
+    ],
+    [
+      11,
+      25,
+      9.338
+    ],
+    [
+      1,
+      16,
+      12.273
+    ],
+    [
+      25,
+      32,
+      13.951
+    ],
+    [
+      15,
+      33,
+      12.69
+    ],
+    [
+      15,
+      28,
+      12.527
+    ],
+    [
+      13,
+      25,
+      12.79
+    ],
+    [
+      12,
+      16,
+      10.328
+    ],
+    [
+      13,
+      22,
+      9.719
+    ],
+    [
+      22,
+      32,
+      10.139
+    ],
+    [
+      6,
+      10,
+      10.315
+    ],
+    [
+      23,
+      30,
+      10.101
+    ],
+    [
+      1,
+      10,
+      12.447
+    ],
+    [
+      20,
+      34,
+      10.005
+    ],
+    [
+      19,
+      24,
+      13.184
+    ],
+    [
+      9,
+      24,
+      12.991
+    ],
+    [
+      2,
+      7,
+      12.217
+    ],
+    [
+      12,
+      17,
+      10.889
+    ],
+    [
+      10,
+      29,
+      10.69
+    ],
+    [
+      17,
+      34,
+      11.762
+    ],
+    [
+      9,
+      22,
+      12.845
+    ],
+    [
+      16,
+      31,
+      9.302
+    ],
+    [
+      23,
+      31,
+      13.482
+    ],
+    [
+      12,
+      30,
+      13.112
+    ],
+    [
+      26,
+      30,
+      11.125
+    ],
+    [
+      19,
+      26,
+      12.555
+    ],
+    [
+      28,
+      33,
+      13.447
+    ],
+    [
+      1,
+      7,
+      11.083
+    ],
+    [
+      14,
+      31,
+      9.353
+    ],
+    [
+      18,
+      34,
+      9.853
+    ],
+    [
+      10,
+      28,
+      10.982
+    ],
+    [
+      13,
+      27,
+      9.744
+    ],
+    [
+      7,
+      11,
+      9.362
+    ],
+    [
+      24,
+      30,
+      10.457
+    ],
+    [
+      9,
+      14,
+      13.342
+    ],
+    [
+      20,
+      24,
+      9.047
+    ],
+    [
+      3,
+      8,
+      11.086
+    ],
+    [
+      2,
+      17,
+      12.562
+    ],
+    [
+      7,
+      29,
+      12.218
+    ],
+    [
+      14,
+      22,
+      12.158
+    ],
+    [
+      25,
+      34,
+      13.574
+    ],
+    [
+      13,
+      23,
+      10.262
+    ],
+    [
+      4,
+      29,
+      11.631
+    ],
+    [
+      15,
+      30,
+      10.057
+    ],
+    [
+      28,
+      34,
+      10.756
+    ],
+    [
+      10,
+      15,
+      12.854
+    ],
+    [
+      29,
+      33,
+      11.185
+    ],
+    [
+      16,
+      30,
+      11.725
+    ],
+    [
+      17,
+      21,
+      10.841
+    ],
+    [
+      10,
+      26,
+      10.3
+    ],
+    [
+      22,
+      33,
+      11.672
+    ],
+    [
+      0,
+      18,
+      12.812
+    ],
+    [
+      8,
+      28,
+      10.867
+    ],
+    [
+      10,
+      25,
+      11.807
+    ],
+    [
+      0,
+      6,
+      12.526
+    ],
+    [
+      11,
+      30,
+      10.708
+    ],
+    [
+      14,
+      27,
+      11.358
+    ],
+    [
+      10,
+      22,
+      12.864
+    ],
+    [
+      13,
+      30,
+      10.713
+    ],
+    [
+      11,
+      31,
+      12.004
+    ],
+    [
+      8,
+      14,
+      12.699
+    ],
+    [
+      14,
+      28,
+      11.157
+    ],
+    [
+      9,
+      13,
+      11.157
+    ],
+    [
+      9,
+      29,
+      11.599
+    ],
+    [
+      13,
+      31,
+      11.055
+    ],
+    [
+      5,
+      13,
+      11.418
+    ],
+    [
+      10,
+      23,
+      9.956
+    ],
+    [
+      0,
+      17,
+      11.343
+    ],
+    [
+      17,
+      33,
+      11.907
+    ],
+    [
+      13,
+      32,
+      12.078
+    ],
+    [
+      21,
+      33,
+      13.288
+    ],
+    [
+      13,
+      28,
+      10.907
+    ],
+    [
+      5,
+      12,
+      10.304
+    ],
+    [
+      16,
+      32,
+      10.368
+    ],
+    [
+      11,
+      24,
+      11.311
+    ],
+    [
+      15,
+      22,
+      11.224
+    ],
+    [
+      16,
+      21,
+      12.947
+    ],
+    [
+      11,
+      16,
+      11.781
+    ],
+    [
+      11,
+      17,
+      10.982
+    ],
+    [
+      12,
+      23,
+      10.65
+    ],
+    [
+      10,
+      20,
+      12.619
+    ],
+    [
+      1,
+      8,
+      11.189
+    ],
+    [
+      19,
+      23,
+      11.464
+    ],
+    [
+      7,
+      12,
+      12.256
+    ],
+    [
+      2,
+      8,
+      13.386
+    ],
+    [
+      4,
+      9,
+      10.339
+    ],
+    [
+      5,
+      17,
+      12.183
+    ],
+    [
+      14,
+      32,
+      11.083
+    ],
+    [
+      6,
+      29,
+      11.295
+    ],
+    [
+      8,
+      26,
+      10.184
+    ],
+    [
+      14,
+      30,
+      10.556
+    ],
+    [
+      18,
+      22,
+      10.999
+    ],
+    [
+      20,
+      26,
+      11.894
+    ],
+    [
+      28,
+      32,
+      10.8
+    ],
+    [
+      5,
+      14,
+      11.468
+    ],
+    [
+      1,
+      18,
+      10.601
+    ],
+    [
+      19,
+      25,
+      11.447
+    ],
+    [
+      22,
+      34,
+      11.577
+    ],
+    [
+      12,
+      18,
+      11.648
+    ],
+    [
+      6,
+      11,
+      10.328
+    ],
+    [
+      8,
+      13,
+      11.945
+    ],
+    [
+      8,
+      29,
+      11.994
+    ],
+    [
+      12,
+      22,
+      11.803
+    ],
+    [
+      10,
+      19,
+      12.194
+    ],
+    [
+      18,
+      28,
+      10.855
+    ],
+    [
+      21,
+      34,
+      11.911
+    ],
+    [
+      12,
+      28,
+      11.514
+    ],
+    [
+      11,
+      18,
+      11.456
+    ],
+    [
+      25,
+      31,
+      12.645
+    ],
+    [
+      27,
+      31,
+      11.325
+    ],
+    [
+      4,
+      10,
+      11.115
+    ],
+    [
+      16,
+      29,
+      10.228
+    ]
+  ],
+  &quot;lj_near&quot;: 4,
+  &quot;lj_severe&quot;: 0,
+  &quot;localized_anchor_rmsd&quot;: null,
+  &quot;manifest&quot;: {
+    &quot;argv&quot;: [
+      &quot;system\\physis_fold_oracle_generic.py&quot;,
+      &quot;--sequence&quot;,
+      &quot;set\\general_benchmark\\1R1F\\sequence\\1R1F.pdb&quot;,
+      &quot;--out&quot;,
+      &quot;general_benchmark\\model_refinement\\esmfold\\1R1F\\seeds\\seed_0\\1R1F.pdb&quot;,
+      &quot;--seed&quot;,
+      &quot;0&quot;,
+      &quot;--report-json&quot;,
+      &quot;general_benchmark\\model_refinement\\esmfold\\1R1F\\seeds\\seed_0\\1R1F.json&quot;,
+      &quot;--report-md&quot;,
+      &quot;general_benchmark\\model_refinement\\esmfold\\1R1F\\seeds\\seed_0\\1R1F.md&quot;,
+      &quot;--run&quot;,
+      &quot;--seed-worker&quot;,
+      &quot;--sidechain-mode&quot;,
+      &quot;rotamer&quot;,
+      &quot;--ga-fitness&quot;,
+      &quot;energy&quot;,
+      &quot;--input-af2&quot;,
+      &quot;set\\general_benchmark\\1R1F\\esmfold\\1R1F_esmfold.pdb&quot;
+    ],
+    &quot;git_commit&quot;: null,
+    &quot;input_sha256&quot;: &quot;f29d2321eb153ae2de7a8ca8c5a52fc6150231d4203b7b8e0379037e19d27005&quot;,
+    &quot;packages&quot;: {
+      &quot;biopython&quot;: &quot;1.87&quot;,
+      &quot;numpy&quot;: &quot;2.4.6&quot;,
+      &quot;openmm&quot;: &quot;8.5.2&quot;,
+      &quot;pdbfixer&quot;: &quot;1.12.0&quot;
+    },
+    &quot;platform&quot;: &quot;Windows-10-10.0.26200-SP0&quot;,
+    &quot;python&quot;: &quot;3.11.15&quot;,
+    &quot;settings&quot;: {
+      &quot;anchor_extra&quot;: &quot;20&quot;,
+      &quot;degradation_level&quot;: &quot;L0&quot;,
+      &quot;dense_min_sep&quot;: 3,
+      &quot;distogram_sigma&quot;: 1.5,
+      &quot;ga_convergence_passes&quot;: 30,
+      &quot;ga_fitness&quot;: &quot;energy&quot;,
+      &quot;ga_generations&quot;: 4,
+      &quot;ga_individuals&quot;: 4,
+      &quot;global_topology_guard&quot;: &quot;1&quot;,
+      &quot;global_topology_max_candidates&quot;: 96,
+      &quot;global_topology_min_improve_a&quot;: 0.25,
+      &quot;local_anchors&quot;: &quot;1&quot;,
+      &quot;output_pdb&quot;: &quot;general_benchmark\\model_refinement\\esmfold\\1R1F\\seeds\\seed_0\\1R1F.pdb&quot;,
+      &quot;pdb_cache&quot;: &quot;set\\general_benchmark\\1R1F\\sequence\\1R1F.pdb&quot;,
+      &quot;rigid_domain_max_domains&quot;: 8,
+      &quot;rigid_domain_reconvergence&quot;: &quot;1&quot;,
+      &quot;rigid_domain_reconvergence_passes&quot;: 4,
+      &quot;seed&quot;: &quot;0&quot;,
+      &quot;sidechain_mode&quot;: &quot;rotamer&quot;,
+      &quot;sidechain_refine&quot;: &quot;1&quot;,
+      &quot;sidechain_refine_alpha&quot;: &quot;1.0&quot;,
+      &quot;topology_reconvergence_passes&quot;: 36
+    }
+  },
+  &quot;matched_heavy_atoms&quot;: 254,
+  &quot;matched_sidechain_heavy_atoms&quot;: 114,
+  &quot;max_residue_error&quot;: 8.161924053261592,
+  &quot;mode&quot;: &quot;oracle&quot;,
+  &quot;output_pdb&quot;: &quot;general_benchmark\\model_refinement\\esmfold\\1R1F\\seeds\\seed_0\\1R1F.pdb&quot;,
+  &quot;phase_b_ca_rmsd_after&quot;: 4.111535332969444,
+  &quot;phase_b_ca_rmsd_before&quot;: 4.111535332969444,
+  &quot;phase_b_method&quot;: &quot;pdbfixer&quot;,
+  &quot;phase_b_sidechain_refine&quot;: {
+    &quot;alpha&quot;: 1.0,
+    &quot;applied&quot;: true,
+    &quot;enabled&quot;: true,
+    &quot;energy_improved&quot;: 40,
+    &quot;final_energy_kj&quot;: 38559.69804568979,
+    &quot;method&quot;: &quot;energy&quot;,
+    &quot;mode&quot;: &quot;rotamer&quot;,
+    &quot;moved_atoms&quot;: 0,
+    &quot;openmm_relaxed&quot;: true,
+    &quot;passes&quot;: 2,
+    &quot;residues&quot;: 35,
+    &quot;seeded&quot;: 29,
+    &quot;select_energy_kj&quot;: 92417817789.08737
+  },
+  &quot;pre_local_rmsd&quot;: 4.111554670321464,
+  &quot;ramachandran_forbidden_fraction&quot;: 0.0,
+  &quot;reference_pdb&quot;: &quot;set\\general_benchmark\\1R1F\\sequence\\1R1F.pdb&quot;,
+  &quot;residue_conflicts&quot;: [
+    {
+      &quot;conflict_severity&quot;: 16.298,
+      &quot;conflicts&quot;: [
+        {
+          &quot;incompatibility&quot;: 3.91,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;G28&quot;,
+          &quot;partner_b&quot;: &quot;C6&quot;,
+          &quot;partner_distance&quot;: 4.99,
+          &quot;severity&quot;: 1.356,
+          &quot;target_a&quot;: 7.39,
+          &quot;target_b&quot;: 16.3
+        },
+        {
+          &quot;incompatibility&quot;: 3.42,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;G3&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 8.4,
+          &quot;severity&quot;: 1.178,
+          &quot;target_a&quot;: 20.7,
+          &quot;target_b&quot;: 8.89
+        },
+        {
+          &quot;incompatibility&quot;: 3.42,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C2&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 5.68,
+          &quot;severity&quot;: 1.177,
+          &quot;target_a&quot;: 17.99,
+          &quot;target_b&quot;: 8.89
+        },
+        {
+          &quot;incompatibility&quot;: 3.34,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;D27&quot;,
+          &quot;partner_b&quot;: &quot;R7&quot;,
+          &quot;partner_distance&quot;: 6.34,
+          &quot;severity&quot;: 1.177,
+          &quot;target_a&quot;: 7.42,
+          &quot;target_b&quot;: 17.1
+        },
+        {
+          &quot;incompatibility&quot;: 3.35,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;F1&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 8.51,
+          &quot;severity&quot;: 1.154,
+          &quot;target_a&quot;: 20.75,
+          &quot;target_b&quot;: 8.89
+        },
+        {
+          &quot;incompatibility&quot;: 2.9,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;T5&quot;,
+          &quot;partner_b&quot;: &quot;G28&quot;,
+          &quot;partner_distance&quot;: 9.47,
+          &quot;severity&quot;: 1.053,
+          &quot;target_a&quot;: 19.76,
+          &quot;target_b&quot;: 7.39
+        }
+      ],
+      &quot;n_conflicts&quot;: 19,
+      &quot;pull_in&quot;: [],
+      &quot;push_out&quot;: [
+        {
+          &quot;confidence&quot;: 0.429,
+          &quot;current&quot;: 16.53,
+          &quot;partner&quot;: &quot;E4&quot;,
+          &quot;target&quot;: 20.82
+        },
+        {
+          &quot;confidence&quot;: 0.427,
+          &quot;current&quot;: 16.79,
+          &quot;partner&quot;: &quot;F1&quot;,
+          &quot;target&quot;: 20.75
+        },
+        {
+          &quot;confidence&quot;: 0.425,
+          &quot;current&quot;: 16.54,
+          &quot;partner&quot;: &quot;G3&quot;,
+          &quot;target&quot;: 20.7
+        },
+        {
+          &quot;confidence&quot;: 0.398,
+          &quot;current&quot;: 14.74,
+          &quot;partner&quot;: &quot;T5&quot;,
+          &quot;target&quot;: 19.76
+        },
+        {
+          &quot;confidence&quot;: 0.363,
+          &quot;current&quot;: 13.5,
+          &quot;partner&quot;: &quot;C2&quot;,
+          &quot;target&quot;: 17.99
+        },
+        {
+          &quot;confidence&quot;: 0.353,
+          &quot;current&quot;: 11.29,
+          &quot;partner&quot;: &quot;R7&quot;,
+          &quot;target&quot;: 17.1
+        },
+        {
+          &quot;confidence&quot;: 0.352,
+          &quot;current&quot;: 11.52,
+          &quot;partner&quot;: &quot;V8&quot;,
+          &quot;target&quot;: 17.01
+        },
+        {
+          &quot;confidence&quot;: 0.346,
+          &quot;current&quot;: 10.32,
+          &quot;partner&quot;: &quot;C6&quot;,
+          &quot;target&quot;: 16.3
+        },
+        {
+          &quot;confidence&quot;: 0.339,
+          &quot;current&quot;: 8.77,
+          &quot;partner&quot;: &quot;P10&quot;,
+          &quot;target&quot;: 11.81
+        }
+      ],
+      &quot;residue&quot;: &quot;D24&quot;,
+      &quot;suspect_group&quot;: &quot;push_out&quot;,
+      &quot;suspect_partner&quot;: &quot;L29&quot;
+    },
+    {
+      &quot;conflict_severity&quot;: 14.032,
+      &quot;conflicts&quot;: [
+        {
+          &quot;incompatibility&quot;: 4.34,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C6&quot;,
+          &quot;partner_b&quot;: &quot;G28&quot;,
+          &quot;partner_distance&quot;: 4.99,
+          &quot;severity&quot;: 1.524,
+          &quot;target_a&quot;: 17.47,
+          &quot;target_b&quot;: 8.14
+        },
+        {
+          &quot;incompatibility&quot;: 4.14,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C2&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 5.68,
+          &quot;severity&quot;: 1.424,
+          &quot;target_a&quot;: 18.8,
+          &quot;target_b&quot;: 8.98
+        },
+        {
+          &quot;incompatibility&quot;: 4.01,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;G3&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 8.4,
+          &quot;severity&quot;: 1.38,
+          &quot;target_a&quot;: 21.38,
+          &quot;target_b&quot;: 8.98
+        },
+        {
+          &quot;incompatibility&quot;: 3.83,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;F1&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 8.51,
+          &quot;severity&quot;: 1.319,
+          &quot;target_a&quot;: 21.32,
+          &quot;target_b&quot;: 8.98
+        },
+        {
+          &quot;incompatibility&quot;: 3.25,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;T5&quot;,
+          &quot;partner_b&quot;: &quot;G28&quot;,
+          &quot;partner_distance&quot;: 9.47,
+          &quot;severity&quot;: 1.139,
+          &quot;target_a&quot;: 20.85,
+          &quot;target_b&quot;: 8.14
+        },
+        {
+          &quot;incompatibility&quot;: 3.31,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C6&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 5.19,
+          &quot;severity&quot;: 1.137,
+          &quot;target_a&quot;: 17.47,
+          &quot;target_b&quot;: 8.98
+        }
+      ],
+      &quot;n_conflicts&quot;: 14,
+      &quot;pull_in&quot;: [],
+      &quot;push_out&quot;: [
+        {
+          &quot;confidence&quot;: 0.446,
+          &quot;current&quot;: 18.74,
+          &quot;partner&quot;: &quot;G3&quot;,
+          &quot;target&quot;: 21.38
+        },
+        {
+          &quot;confidence&quot;: 0.444,
+          &quot;current&quot;: 18.4,
+          &quot;partner&quot;: &quot;F1&quot;,
+          &quot;target&quot;: 21.32
+        },
+        {
+          &quot;confidence&quot;: 0.43,
+          &quot;current&quot;: 18.14,
+          &quot;partner&quot;: &quot;T5&quot;,
+          &quot;target&quot;: 20.85
+        },
+        {
+          &quot;confidence&quot;: 0.377,
+          &quot;current&quot;: 15.97,
+          &quot;partner&quot;: &quot;C2&quot;,
+          &quot;target&quot;: 18.8
+        },
+        {
+          &quot;confidence&quot;: 0.366,
+          &quot;current&quot;: 15.3,
+          &quot;partner&quot;: &quot;V8&quot;,
+          &quot;target&quot;: 18.18
+        },
+        {
+          &quot;confidence&quot;: 0.36,
+          &quot;current&quot;: 14.54,
+          &quot;partner&quot;: &quot;R7&quot;,
+          &quot;target&quot;: 17.79
+        },
+        {
+          &quot;confidence&quot;: 0.356,
+          &quot;current&quot;: 13.76,
+          &quot;partner&quot;: &quot;C6&quot;,
+          &quot;target&quot;: 17.47
+        }
+      ],
+      &quot;residue&quot;: &quot;R25&quot;,
+      &quot;suspect_group&quot;: &quot;push_out&quot;,
+      &quot;suspect_partner&quot;: &quot;L29&quot;
+    },
+    {
+      &quot;conflict_severity&quot;: 13.508,
+      &quot;conflicts&quot;: [
+        {
+          &quot;incompatibility&quot;: 3.49,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;G3&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 8.4,
+          &quot;severity&quot;: 1.246,
+          &quot;target_a&quot;: 19.62,
+          &quot;target_b&quot;: 7.73
+        },
+        {
+          &quot;incompatibility&quot;: 3.08,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;C2&quot;,
+          &quot;partner_distance&quot;: 5.68,
+          &quot;severity&quot;: 1.073,
+          &quot;target_a&quot;: 7.73,
+          &quot;target_b&quot;: 16.5
+        },
+        {
+          &quot;incompatibility&quot;: 3.03,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;G28&quot;,
+          &quot;partner_b&quot;: &quot;C6&quot;,
+          &quot;partner_distance&quot;: 4.99,
+          &quot;severity&quot;: 1.044,
+          &quot;target_a&quot;: 7.93,
+          &quot;target_b&quot;: 15.95
+        },
+        {
+          &quot;incompatibility&quot;: 3.02,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;C6&quot;,
+          &quot;partner_distance&quot;: 5.19,
+          &quot;severity&quot;: 1.042,
+          &quot;target_a&quot;: 7.73,
+          &quot;target_b&quot;: 15.95
+        },
+        {
+          &quot;incompatibility&quot;: 2.77,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;F1&quot;,
+          &quot;partner_b&quot;: &quot;L29&quot;,
+          &quot;partner_distance&quot;: 8.51,
+          &quot;severity&quot;: 0.988,
+          &quot;target_a&quot;: 19.01,
+          &quot;target_b&quot;: 7.73
+        },
+        {
+          &quot;incompatibility&quot;: 2.63,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C30&quot;,
+          &quot;partner_b&quot;: &quot;C2&quot;,
+          &quot;partner_distance&quot;: 6.56,
+          &quot;severity&quot;: 0.915,
+          &quot;target_a&quot;: 7.31,
+          &quot;target_b&quot;: 16.5
+        }
+      ],
+      &quot;n_conflicts&quot;: 16,
+      &quot;pull_in&quot;: [],
+      &quot;push_out&quot;: [
+        {
+          &quot;confidence&quot;: 0.395,
+          &quot;current&quot;: 16.74,
+          &quot;partner&quot;: &quot;G3&quot;,
+          &quot;target&quot;: 19.62
+        },
+        {
+          &quot;confidence&quot;: 0.381,
+          &quot;current&quot;: 16.04,
+          &quot;partner&quot;: &quot;F1&quot;,
+          &quot;target&quot;: 19.01
+        },
+        {
+          &quot;confidence&quot;: 0.361,
+          &quot;current&quot;: 15.18,
+          &quot;partner&quot;: &quot;V8&quot;,
+          &quot;target&quot;: 17.82
+        },
+        {
+          &quot;confidence&quot;: 0.354,
+          &quot;current&quot;: 14.46,
+          &quot;partner&quot;: &quot;R7&quot;,
+          &quot;target&quot;: 17.27
+        },
+        {
+          &quot;confidence&quot;: 0.348,
+          &quot;current&quot;: 13.41,
+          &quot;partner&quot;: &quot;C2&quot;,
+          &quot;target&quot;: 16.5
+        },
+        {
+          &quot;confidence&quot;: 0.345,
+          &quot;current&quot;: 12.34,
+          &quot;partner&quot;: &quot;C6&quot;,
+          &quot;target&quot;: 15.95
+        }
+      ],
+      &quot;residue&quot;: &quot;D23&quot;,
+      &quot;suspect_group&quot;: &quot;push_out&quot;,
+      &quot;suspect_partner&quot;: &quot;L29&quot;
+    },
+    {
+      &quot;conflict_severity&quot;: 7.674,
+      &quot;conflicts&quot;: [
+        {
+          &quot;incompatibility&quot;: 4.05,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;G3&quot;,
+          &quot;partner_distance&quot;: 8.4,
+          &quot;severity&quot;: 1.491,
+          &quot;target_a&quot;: 5.89,
+          &quot;target_b&quot;: 18.33
+        },
+        {
+          &quot;incompatibility&quot;: 3.91,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;F1&quot;,
+          &quot;partner_distance&quot;: 8.51,
+          &quot;severity&quot;: 1.439,
+          &quot;target_a&quot;: 5.89,
+          &quot;target_b&quot;: 18.31
+        },
+        {
+          &quot;incompatibility&quot;: 4.03,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;C2&quot;,
+          &quot;partner_distance&quot;: 5.68,
+          &quot;severity&quot;: 1.382,
+          &quot;target_a&quot;: 5.89,
+          &quot;target_b&quot;: 15.6
+        },
+        {
+          &quot;incompatibility&quot;: 3.34,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;C6&quot;,
+          &quot;partner_distance&quot;: 5.19,
+          &quot;severity&quot;: 1.138,
+          &quot;target_a&quot;: 5.89,
+          &quot;target_b&quot;: 14.42
+        },
+        {
+          &quot;incompatibility&quot;: 3.04,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;E4&quot;,
+          &quot;partner_distance&quot;: 9.37,
+          &quot;severity&quot;: 1.116,
+          &quot;target_a&quot;: 5.89,
+          &quot;target_b&quot;: 18.29
+        },
+        {
+          &quot;incompatibility&quot;: 3.04,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;L29&quot;,
+          &quot;partner_b&quot;: &quot;T5&quot;,
+          &quot;partner_distance&quot;: 9.13,
+          &quot;severity&quot;: 1.108,
+          &quot;target_a&quot;: 5.89,
+          &quot;target_b&quot;: 18.06
+        }
+      ],
+      &quot;n_conflicts&quot;: 6,
+      &quot;pull_in&quot;: [],
+      &quot;push_out&quot;: [
+        {
+          &quot;confidence&quot;: 0.368,
+          &quot;current&quot;: 13.85,
+          &quot;partner&quot;: &quot;G3&quot;,
+          &quot;target&quot;: 18.33
+        },
+        {
+          &quot;confidence&quot;: 0.368,
+          &quot;current&quot;: 14.13,
+          &quot;partner&quot;: &quot;F1&quot;,
+          &quot;target&quot;: 18.31
+        },
+        {
+          &quot;confidence&quot;: 0.368,
+          &quot;current&quot;: 13.88,
+          &quot;partner&quot;: &quot;E4&quot;,
+          &quot;target&quot;: 18.29
+        },
+        {
+          &quot;confidence&quot;: 0.364,
+          &quot;current&quot;: 12.83,
+          &quot;partner&quot;: &quot;T5&quot;,
+          &quot;target&quot;: 18.06
+        },
+        {
+          &quot;confidence&quot;: 0.343,
+          &quot;current&quot;: 10.38,
+          &quot;partner&quot;: &quot;V8&quot;,
+          &quot;target&quot;: 15.63
+        },
+        {
+          &quot;confidence&quot;: 0.343,
+          &quot;current&quot;: 11.72,
+          &quot;partner&quot;: &quot;C2&quot;,
+          &quot;target&quot;: 15.6
+        },
+        {
+          &quot;confidence&quot;: 0.341,
+          &quot;current&quot;: 9.04,
+          &quot;partner&quot;: &quot;R7&quot;,
+          &quot;target&quot;: 14.68
+        },
+        {
+          &quot;confidence&quot;: 0.34,
+          &quot;current&quot;: 8.86,
+          &quot;partner&quot;: &quot;C6&quot;,
+          &quot;target&quot;: 14.42
+        }
+      ],
+      &quot;residue&quot;: &quot;S26&quot;,
+      &quot;suspect_group&quot;: &quot;push_out&quot;,
+      &quot;suspect_partner&quot;: &quot;G3&quot;
+    },
+    {
+      &quot;conflict_severity&quot;: 7.069,
+      &quot;conflicts&quot;: [
+        {
+          &quot;incompatibility&quot;: 3.89,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;D24&quot;,
+          &quot;partner_b&quot;: &quot;C6&quot;,
+          &quot;partner_distance&quot;: 10.32,
+          &quot;severity&quot;: 1.51,
+          &quot;target_a&quot;: 20.7,
+          &quot;target_b&quot;: 6.5
+        },
+        {
+          &quot;incompatibility&quot;: 3.46,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C6&quot;,
+          &quot;partner_b&quot;: &quot;D27&quot;,
+          &quot;partner_distance&quot;: 7.26,
+          &quot;severity&quot;: 1.223,
+          &quot;target_a&quot;: 6.5,
+          &quot;target_b&quot;: 17.22
+        },
+        {
+          &quot;incompatibility&quot;: 3.35,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C6&quot;,
+          &quot;partner_b&quot;: &quot;C22&quot;,
+          &quot;partner_distance&quot;: 7.32,
+          &quot;severity&quot;: 1.184,
+          &quot;target_a&quot;: 6.5,
+          &quot;target_b&quot;: 17.17
+        },
+        {
+          &quot;incompatibility&quot;: 2.97,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C6&quot;,
+          &quot;partner_b&quot;: &quot;S26&quot;,
+          &quot;partner_distance&quot;: 8.86,
+          &quot;severity&quot;: 1.094,
+          &quot;target_a&quot;: 6.5,
+          &quot;target_b&quot;: 18.33
+        },
+        {
+          &quot;incompatibility&quot;: 3.13,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;C6&quot;,
+          &quot;partner_b&quot;: &quot;G28&quot;,
+          &quot;partner_distance&quot;: 4.99,
+          &quot;severity&quot;: 1.066,
+          &quot;target_a&quot;: 6.5,
+          &quot;target_b&quot;: 14.62
+        },
+        {
+          &quot;incompatibility&quot;: 2.82,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;D27&quot;,
+          &quot;partner_b&quot;: &quot;R7&quot;,
+          &quot;partner_distance&quot;: 6.34,
+          &quot;severity&quot;: 0.992,
+          &quot;target_a&quot;: 17.22,
+          &quot;target_b&quot;: 8.06
+        }
+      ],
+      &quot;n_conflicts&quot;: 6,
+      &quot;pull_in&quot;: [],
+      &quot;push_out&quot;: [
+        {
+          &quot;confidence&quot;: 0.446,
+          &quot;current&quot;: 18.74,
+          &quot;partner&quot;: &quot;R25&quot;,
+          &quot;target&quot;: 21.38
+        },
+        {
+          &quot;confidence&quot;: 0.425,
+          &quot;current&quot;: 16.54,
+          &quot;partner&quot;: &quot;D24&quot;,
+          &quot;target&quot;: 20.7
+        },
+        {
+          &quot;confidence&quot;: 0.395,
+          &quot;current&quot;: 16.74,
+          &quot;partner&quot;: &quot;D23&quot;,
+          &quot;target&quot;: 19.62
+        },
+        {
+          &quot;confidence&quot;: 0.368,
+          &quot;current&quot;: 13.85,
+          &quot;partner&quot;: &quot;S26&quot;,
+          &quot;target&quot;: 18.33
+        },
+        {
+          &quot;confidence&quot;: 0.365,
+          &quot;current&quot;: 14.75,
+          &quot;partner&quot;: &quot;N33&quot;,
+          &quot;target&quot;: 18.11
+        },
+        {
+          &quot;confidence&quot;: 0.354,
+          &quot;current&quot;: 13.29,
+          &quot;partner&quot;: &quot;D27&quot;,
+          &quot;target&quot;: 17.22
+        },
+        {
+          &quot;confidence&quot;: 0.353,
+          &quot;current&quot;: 12.52,
+          &quot;partner&quot;: &quot;C22&quot;,
+          &quot;target&quot;: 17.17
+        },
+        {
+          &quot;confidence&quot;: 0.352,
+          &quot;current&quot;: 13.69,
+          &quot;partner&quot;: &quot;D35&quot;,
+          &quot;target&quot;: 17.08
+        },
+        {
+          &quot;confidence&quot;: 0.341,
+          &quot;current&quot;: 11.51,
+          &quot;partner&quot;: &quot;K31&quot;,
+          &quot;target&quot;: 14.64
+        },
+        {
+          &quot;confidence&quot;: 0.341,
+          &quot;current&quot;: 11.68,
+          &quot;partner&quot;: &quot;G28&quot;,
+          &quot;target&quot;: 14.62
+        },
+        {
+          &quot;confidence&quot;: 0.341,
+          &quot;current&quot;: 10.65,
+          &quot;partner&quot;: &quot;R32&quot;,
+          &quot;target&quot;: 14.53
+        },
+        {
+          &quot;confidence&quot;: 0.34,
+          &quot;current&quot;: 10.96,
+          &quot;partner&quot;: &quot;C20&quot;,
+          &quot;target&quot;: 14.3
+        },
+        {
+          &quot;confidence&quot;: 0.339,
+          &quot;current&quot;: 8.4,
+          &quot;partner&quot;: &quot;L29&quot;,
+          &quot;target&quot;: 13.07
+        }
+      ],
+      &quot;residue&quot;: &quot;G3&quot;,
+      &quot;suspect_group&quot;: &quot;push_out&quot;,
+      &quot;suspect_partner&quot;: &quot;C6&quot;
+    },
+    {
+      &quot;conflict_severity&quot;: 5.529,
+      &quot;conflicts&quot;: [
+        {
+          &quot;incompatibility&quot;: 3.62,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;D24&quot;,
+          &quot;partner_b&quot;: &quot;R7&quot;,
+          &quot;partner_distance&quot;: 11.29,
+          &quot;severity&quot;: 1.511,
+          &quot;target_a&quot;: 20.82,
+          &quot;target_b&quot;: 5.9
+        },
+        {
+          &quot;incompatibility&quot;: 4.23,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;R7&quot;,
+          &quot;partner_b&quot;: &quot;D27&quot;,
+          &quot;partner_distance&quot;: 6.34,
+          &quot;severity&quot;: 1.468,
+          &quot;target_a&quot;: 5.9,
+          &quot;target_b&quot;: 16.47
+        },
+        {
+          &quot;incompatibility&quot;: 3.35,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;R7&quot;,
+          &quot;partner_b&quot;: &quot;S26&quot;,
+          &quot;partner_distance&quot;: 9.04,
+          &quot;severity&quot;: 1.231,
+          &quot;target_a&quot;: 5.9,
+          &quot;target_b&quot;: 18.29
+        },
+        {
+          &quot;incompatibility&quot;: 2.17,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;R7&quot;,
+          &quot;partner_b&quot;: &quot;C22&quot;,
+          &quot;partner_distance&quot;: 10.0,
+          &quot;severity&quot;: 0.789,
+          &quot;target_a&quot;: 5.9,
+          &quot;target_b&quot;: 18.07
+        },
+        {
+          &quot;incompatibility&quot;: 1.56,
+          &quot;kind&quot;: &quot;too_close_together&quot;,
+          &quot;partner_a&quot;: &quot;R7&quot;,
+          &quot;partner_b&quot;: &quot;G28&quot;,
+          &quot;partner_distance&quot;: 6.77,
+          &quot;severity&quot;: 0.53,
+          &quot;target_a&quot;: 5.9,
+          &quot;target_b&quot;: 14.24
+        }
+      ],
+      &quot;n_conflicts&quot;: 5,
+      &quot;pull_in&quot;: [],
+      &quot;push_out&quot;: [
+        {
+          &quot;confidence&quot;: 0.429,
+          &quot;current&quot;: 16.53,
+          &quot;partner&quot;: &quot;D24&quot;,
+          &quot;target&quot;: 20.82
+        },
+        {
+          &quot;confidence&quot;: 0.415,
+          &quot;current&quot;: 17.85,
+          &quot;partner&quot;: &quot;N33&quot;,
+          &quot;target&quot;: 20.37
+        },
+        {
+          &quot;confidence&quot;: 0.368,
+          &quot;current&quot;: 13.88,
+          &quot;partner&quot;: &quot;S26&quot;,
+          &quot;target&quot;: 18.29
+        },
+        {
+          &quot;confidence&quot;: 0.364,
+          &quot;current&quot;: 13.19,
+          &quot;partner&quot;: &quot;C22&quot;,
+          &quot;target&quot;: 18.07
+        },
+        {
+          &quot;confidence&quot;: 0.351,
+          &quot;current&quot;: 13.76,
+          &quot;partner&quot;: &quot;R32&quot;,
+          &quot;target&quot;: 16.97
+        },
+        {
+          &quot;confidence&quot;: 0.348,
+          &quot;current&quot;: 12.42,
+          &quot;partner&quot;: &quot;D27&quot;,
+          &quot;target&quot;: 16.47
+        },
+        {
+          &quot;confidence&quot;: 0.347,
+          &quot;current&quot;: 13.21,
+          &quot;partner&quot;: &quot;C20&quot;,
+          &quot;target&quot;: 16.41
+        },
+        {
+          &quot;confidence&quot;: 0.34,
+          &quot;current&quot;: 11.32,
+          &quot;partner&quot;: &quot;G28&quot;,
+          &quot;target&quot;: 14.24
+        },
+        {
+          &quot;confidence&quot;: 0.34,
+          &quot;current&quot;: 9.37,
+          &quot;partner&quot;: &quot;L29&quot;,
+          &quot;target&quot;: 13.41
+        }
+      ],
+      &quot;residue&quot;: &quot;E4&quot;,
+      &quot;suspect_group&quot;: &quot;push_out&quot;,
+      &quot;suspect_partner&quot;: &quot;R7&quot;
+    }
+  ],
+  &quot;residues&quot;: 35,
+  &quot;rigid_domain_reconvergence&quot;: {
+    &quot;accepted&quot;: 0,
+    &quot;after_rmsd&quot;: null,
+    &quot;applied&quot;: false,
+    &quot;before_rmsd&quot;: null,
+    &quot;enabled&quot;: true,
+    &quot;passes&quot;: 0,
+    &quot;reason&quot;: &quot;topology_guard_not_applied&quot;,
+    &quot;tested_candidates&quot;: 0
+  },
+  &quot;rotamer_mean_chi1_well_err&quot;: 5.855221525333588,
+  &quot;rotamer_outlier_count&quot;: 0,
+  &quot;rotamer_outlier_fraction&quot;: 0.0,
+  &quot;rotamer_total_with_wells&quot;: 29,
+  &quot;sequence&quot;: &quot;FCGETCRVIPVCTYSAALGCTCDDRSDGLCKRNGD&quot;,
+  &quot;sidechain_heavy_atom_rmsd&quot;: 6.318618953409919,
+  &quot;sidechain_heavy_atom_rmsd_before_sidechain_refine&quot;: 6.444229828102021,
+  &quot;sidechain_heavy_atom_rmsd_effective&quot;: 6.318618953409919,
+  &quot;ssbond_source&quot;: &quot;PDB SSBOND records&quot;,
+  &quot;tm_score_ca_ordered&quot;: 0.2272986140472735,
+  &quot;topology_reconvergence&quot;: {
+    &quot;accepted&quot;: 0,
+    &quot;after_rmsd&quot;: null,
+    &quot;applied&quot;: false,
+    &quot;before_rmsd&quot;: null,
+    &quot;enabled&quot;: true,
+    &quot;passes&quot;: 0,
+    &quot;rejected&quot;: 0
+  },
+  &quot;verdict&quot;: &quot;PASS_WITH_WARNINGS&quot;,
+  &quot;warnings&quot;: [
+    &quot;Final CA RMSD is above the &lt;1.0 A ceiling target.&quot;,
+    &quot;Matched heavy-atom RMSD is high; side-chain placement needs refinement.&quot;,
+    &quot;Side-chain heavy-atom RMSD is high; rotamer/packing refinement is not production-ready.&quot;
+  ],
+  &quot;worst_distance_pairs&quot;: [
+    {
+      &quot;current&quot;: 10.317484295664416,
+      &quot;error&quot;: 5.978920577903777,
+      &quot;pair&quot;: &quot;C6-D24&quot;,
+      &quot;target&quot;: 16.296404873568193
+    },
+    {
+      &quot;current&quot;: 7.32276471255904,
+      &quot;error&quot;: 5.860715982754766,
+      &quot;pair&quot;: &quot;C6-C22&quot;,
+      &quot;target&quot;: 13.183480695313806
+    },
+    {
+      &quot;current&quot;: 11.29245433109197,
+      &quot;error&quot;: 5.8041890692997935,
+      &quot;pair&quot;: &quot;R7-D24&quot;,
+      &quot;target&quot;: 17.096643400391763
+    },
+    {
+      &quot;current&quot;: 6.340956813642032,
+      &quot;error&quot;: 5.757812475170052,
+      &quot;pair&quot;: &quot;R7-D27&quot;,
+      &quot;target&quot;: 12.098769288812084
+    },
+    {
+      &quot;current&quot;: 9.043382941692231,
+      &quot;error&quot;: 5.640685614623546,
+      &quot;pair&quot;: &quot;R7-S26&quot;,
+      &quot;target&quot;: 14.684068556315777
+    },
+    {
+      &quot;current&quot;: 8.859397415124795,
+      &quot;error&quot;: 5.561620650220098,
+      &quot;pair&quot;: &quot;C6-S26&quot;,
+      &quot;target&quot;: 14.421018065344892
+    },
+    {
+      &quot;current&quot;: 11.520070934584217,
+      &quot;error&quot;: 5.48760481576773,
+      &quot;pair&quot;: &quot;V8-D24&quot;,
+      &quot;target&quot;: 17.007675750351947
+    },
+    {
+      &quot;current&quot;: 10.754966484194753,
+      &quot;error&quot;: 5.4864779674426565,
+      &quot;pair&quot;: &quot;T5-D27&quot;,
+      &quot;target&quot;: 16.24144445163741
+    }
+  ],
+  &quot;worst_residues&quot;: [
+    {
+      &quot;error&quot;: 8.161924053261592,
+      &quot;residue&quot;: &quot;Y14&quot;
+    },
+    {
+      &quot;error&quot;: 7.20220017431303,
+      &quot;residue&quot;: &quot;R25&quot;
+    },
+    {
+      &quot;error&quot;: 6.897152817529028,
+      &quot;residue&quot;: &quot;S26&quot;
+    },
+    {
+      &quot;error&quot;: 6.13893732930728,
+      &quot;residue&quot;: &quot;E4&quot;
+    },
+    {
+      &quot;error&quot;: 5.226209424848977,
+      &quot;residue&quot;: &quot;G28&quot;
+    },
+    {
+      &quot;error&quot;: 5.187313748026111,
+      &quot;residue&quot;: &quot;V8&quot;
+    },
+    {
+      &quot;error&quot;: 5.15223544989565,
+      &quot;residue&quot;: &quot;T5&quot;
+    },
+    {
+      &quot;error&quot;: 4.970668895575027,
+      &quot;residue&quot;: &quot;F1&quot;
+    },
+    {
+      &quot;error&quot;: 4.803791717644908,
+      &quot;residue&quot;: &quot;V11&quot;
+    },
+    {
+      &quot;error&quot;: 4.556398799037951,
+      &quot;residue&quot;: &quot;I9&quot;
+    }
+  ]
+}</pre></div></details>
+</body></html>
